@@ -4,4 +4,4 @@ from django.urls import reverse
 
 
 def index(request):
-    return HttpResponseRedirect(reverse('wttapp:home'))
+    return HttpResponseRedirect(reverse('home'))

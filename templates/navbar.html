@@ -19,10 +19,11 @@
                 <a class="nav-link" href="{% url 'index' %}">Home &nbsp; <i class="fa fa-home" aria-hidden="true"></i>
                 </a>
             </li>
-
+            {% if user.user_profile.position == 'Manager' or user.user_profile.position == 'System Admin' %}
             <li class="nav-item me-3">
-                <a class="nav-link" href="{% url 'user_list' %}">User List &nbsp; <i class="fa fa-users" aria-hidden="true"></i> </a>
+                <a class="nav-link" href="{% url 'user_list' %}">User List &nbsp; <i class="fa fa-users" aria-hidden="true"></i></a>
             </li>
+            {% endif %}
 
             <li class="nav-item me-3">
                 <a class="nav-link" href="#">Notice Board &nbsp; <i class="fa fa-info" aria-hidden="true"></i> </a>

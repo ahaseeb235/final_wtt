@@ -30,8 +30,7 @@
 
 
 <hr>
-<a class="btn btn-outline-primary btn-sm" href="#">Create new record &nbsp; <i class="fa fa-plus-circle"
-        aria-hidden="true"></i></a>
+<a class="btn btn-outline-primary btn-sm" href="{% url 'create_record' %}">Create new record &nbsp; <i class="fa fa-plus-circle" aria-hidden="true"></i></a>
 <br><br>
 
 
@@ -52,7 +51,7 @@
         {% if records %}
         {% for record in records %}
         <tr>
-            <td>{{ record.firstname }} {{ record.lastname }}</td>
+            <td>{{ record.firstname }} </td>
             <td>{{ record.date }}</td>
             <td>{{ record.get_workday_type_display }}</td>
             <td>{{ record.get_month_display }}</td>
@@ -60,7 +59,7 @@
             <td>{{ record.time_out }}</td>
             <td>{{ record.total_hours|floatformat:2 }}</td>
             <td>
-                <a href="#" class="btn btn-info btn-sm">View</a>
+                <a href="#" class="btn btn-info btn-sm">Edit</a>
 
 
         </tr>
