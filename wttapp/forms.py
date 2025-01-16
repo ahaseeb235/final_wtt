@@ -9,7 +9,7 @@ from django import forms
 class WorkdayForm(forms.ModelForm):
     class Meta:
         model = Workday
-        fields = ['date', 'month', 'workday_type', 'time_in', 'time_out']
+        fields = ['name', 'date', 'month', 'workday_type', 'time_in', 'time_out']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
             'time_in': forms.TimeInput(attrs={'type': 'time'}),

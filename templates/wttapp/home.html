@@ -33,6 +33,12 @@
 <a class="btn btn-outline-primary btn-sm" href="{% url 'create_record' %}">Create new record &nbsp; <i class="fa fa-plus-circle" aria-hidden="true"></i></a>
 <br><br>
 
+{% if user_profile.status == 'Active' and user_profile.position in 'System Admin Manager' %}
+    <h2>All Workday Entries</h2>
+{% else %}
+    <h2>Your Workday Entries</h2>
+{% endif %}
+
 
 <table class="table table-hover table-striped  table-bordered text-center">
     <thead class="table-light">
@@ -51,7 +57,7 @@
         {% if records %}
         {% for record in records %}
         <tr>
-            <td>{{ record.firstname }} </td>
+            <td>{{ record.firstname }} {{ record.lastname }} </td>
             <td>{{ record.date }}</td>
             <td>{{ record.get_workday_type_display }}</td>
             <td>{{ record.get_month_display }}</td>
