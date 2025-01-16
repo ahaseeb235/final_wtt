@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} wttApp - Dashboard {% endblock %}
+
+
+
+
+{% block content %}
+<h3> Welcome {{user}}! 👋 </h3>
+<hr>
+
+<h4>Graphs</h4>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left Div -->
+        <div class="col-md-6 col-12">
+            <div class="custom-div">
+                <p class="text-muted">This is the left div for graph.</p>
+            </div>
+        </div>
+
+        <!-- Right Div -->
+        <div class="col-md-6 col-12">
+            <div class="custom-div">
+                <p class="text-muted">This is the right div for pragh. </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<hr>
+<a class="btn btn-outline-primary btn-sm" href="#">Create new record &nbsp; <i class="fa fa-plus-circle"
+        aria-hidden="true"></i></a>
+<br><br>
+
+
+<table class="table table-hover table-striped  table-bordered text-center">
+    <thead class="table-light">
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Date</th>
+            <th scope="col">Type</th>
+            <th scope="col">Month</th>
+            <th scope="col">Time In</th>
+            <th scope="col">Time Out</th>
+            <th scope="col">Total Hours</th>
+            <th scope="col">View</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if records %}
+        {% for record in records %}
+        <tr>
+            <td>{{ record.firstname }} {{ record.lastname }}</td>
+            <td>{{ record.date }}</td>
+            <td>{{ record.get_workday_type_display }}</td>
+            <td>{{ record.get_month_display }}</td>
+            <td>{{ record.time_in }}</td>
+            <td>{{ record.time_out }}</td>
+            <td>{{ record.total_hours|floatformat:2 }}</td>
+            <td>
+                <a href="#" class="btn btn-info btn-sm">View</a>
+
+
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+
+<br>
+
+<!-- Pagination controls -->
+<div class="pagination">
+    <span class="step-links">
+        {% if records.has_previous %}
+        <a class="btn btn-info btn-sm btn-secondary" href="?page=1">&laquo; First</a> &nbsp;
+        <a class="btn btn-info btn-sm btn-secondary" href="?page={{ records.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ records.number }} of {{ records.paginator.num_pages }}
+        </span>
+
+        {% if records.has_next %}
+        <a class="btn btn-info btn-sm btn-secondary" href="?page={{ records.next_page_number }}">Next</a> &nbsp;
+        <a class="btn btn-info btn-sm btn-secondary" href="?page={{ records.paginator.num_pages }}">Last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+
+{% endblock %}

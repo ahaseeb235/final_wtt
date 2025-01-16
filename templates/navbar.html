@@ -1,0 +1,80 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+
+    <a class="navbar-brand main-heading" href="{% url 'index' %}">&nbsp; &nbsp; <i>WorkTimeTracker</i></a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+
+    </button>
+
+
+    <div class="collapse navbar-collapse text-center" id="navbarNavDropdown">
+        <ul class="navbar-nav ms-auto">
+
+
+            {% if user.is_authenticated %}
+
+            <li class="nav-item me-3">
+                <a class="nav-link" href="{% url 'index' %}">Home &nbsp; <i class="fa fa-home" aria-hidden="true"></i>
+                </a>
+            </li>
+
+            <li class="nav-item me-3">
+                <a class="nav-link" href="{% url 'user_list' %}">User List &nbsp; <i class="fa fa-info" aria-hidden="true"></i> </a>
+            </li>
+
+            <li class="nav-item me-3">
+                <a class="nav-link" href="#">Notice Board &nbsp; <i class="fa fa-info" aria-hidden="true"></i> </a>
+            </li>
+
+            <li class="nav-item me-3">
+                <a class="nav-link" href="{% url 'profile' %}">Profile &nbsp; <i class="fa fa-user"
+                        aria-hidden="true"></i> </a>
+            </li>
+
+            <li class="nav-item me-3">
+                <a class="nav-link" href="{% url 'login' %}">Sign out &nbsp; <i class="fa fa-sign-out"
+                        aria-hidden="true"></i> </a>
+            </li>
+
+
+        </ul>
+
+        {% else %}
+
+        <li class="nav-item">
+
+            <a class="nav-link me-3" href="{% url 'register' %}"> Register </a>
+
+        </li>
+
+
+        &nbsp; &nbsp; &nbsp;
+
+
+        <li class="nav-item">
+
+            <a class="nav-link me-3" href="{% url 'login' %}">Login</a>
+
+        </li>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+
+</nav>
+
+
+<!-- footer-->
+
+<footer>
+    <div class="container footer-container">
+        <br>
+        <p class="text-center">Work Time Tracker &copy; 2025</p>
+    </div>
+</footer>

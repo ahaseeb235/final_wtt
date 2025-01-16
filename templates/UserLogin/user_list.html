@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}User List{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>User List</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Manager</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.user.id }}</td>  
+                <td>{{ user.user.username }}</td>
+                <td>{{ user.firstname }} {{ user.lastname }}</td>
+                <td>{{ user.position }}</td>
+                <td>{{ user.manager_name.username|default:"None" }}</td>
+                <td>{{ user.status }}</td> 
+                <td>
+                    <a href="{% url 'edit_user' user.id %}" class="btn btn-warning btn-sm">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

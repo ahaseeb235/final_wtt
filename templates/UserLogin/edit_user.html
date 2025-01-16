@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit User: {{ user_profile.user.username }}</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Display form errors -->
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <strong>Error!</strong> Please correct the errors below.
+            {{ form.errors }}
+        </div>
+        {% endif %}
+
+        <!-- Non-editable fields -->
+        <div class="form-group">
+            <label for="id_firstname">First Name</label>
+            <input type="text" class="form-control" id="id_firstname" value="{{ form.instance.firstname }}" readonly>
+            <input type="hidden" name="firstname" value="{{ form.instance.firstname }}">
+        </div>
+        <div class="form-group">
+            <label for="id_lastname">Last Name</label>
+            <input type="text" class="form-control" id="id_lastname" value="{{ form.instance.lastname }}" readonly>
+            <input type="hidden" name="lastname" value="{{ form.instance.lastname }}">
+        </div>
+        <div class="form-group">
+            <label for="id_email">Email</label>
+            <input type="email" class="form-control" id="id_email" value="{{ form.instance.email }}" readonly>
+            <input type="hidden" name="email" value="{{ form.instance.email }}">
+        </div>
+        <div class="form-group">
+            <label for="id_position">Position</label>
+            <input type="text" class="form-control" id="id_position" value="{{ form.instance.position }}" readonly>
+            <input type="hidden" name="position" value="{{ form.instance.position }}">
+        </div>
+        <div class="form-group">
+            <label for="id_emergency_contact">Emergency Contact</label>
+            <input type="text" class="form-control" id="id_emergency_contact" value="{{ form.instance.emergency_contact }}" readonly>
+            <input type="hidden" name="emergency_contact" value="{{ form.instance.emergency_contact }}">
+        </div>
+
+        <!-- Editable fields -->
+        <div class="form-group">
+            {{ form.status|as_crispy_field }}
+        </div>
+        <div class="form-group">
+            {{ form.manager_name|as_crispy_field }}
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a href="{% url 'user_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} wttApp - Profile {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Left Column: Profile Picture and Basic Info -->
+        
+
+        <!-- Right Column: Profile Details -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Profile Information</h3>
+                    <hr>
+
+                    <!-- Personal Details -->
+                    <div class="mb-4">
+                        <h5>Personal Details</h5>
+                        <p><strong>First Name:</strong> {{ user_profile.firstname }}</p>
+                        <p><strong>Last Name:</strong> {{ user_profile.lastname }}</p>
+                        <p><strong>Email:</strong> {{ user_profile.email }}</p>
+                    </div>
+
+                    <!-- Emergency Contact -->
+                    <div class="mb-4">
+                        <h5>Emergency Contact</h5>
+                        <p>{{ user_profile.emergency_contact|default:"Not provided" }}</p>
+                    </div>
+
+                    <!-- Manager -->
+                    <div class="mb-4">
+                        <h5>Manager</h5>
+                        <p>
+                            {% if user_profile.manager_name %}
+                            {{ user_profile.manager_name.username }}
+                            {% else %}
+                            No manager assigned
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- Edit Profile Button -->
+                    <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
