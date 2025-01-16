@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'crispy_forms', # This is crispy_forms
     'crispy_bootstrap4', # This is crispy_bootstrap4
     'crispy_bootstrap5', # This is crispy_bootstrap5
+    'django_cleanup', # This is django_cleanup
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
