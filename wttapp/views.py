@@ -29,9 +29,9 @@ def home(request):
     
     # Check if the user is an active System Admin or Manager
     if user_profile.status == 'Active' and user_profile.position in ['System Admin', 'Manager']:
-        records_list = Workday.objects.all()  # Show all records
+        records_list = Workday.objects.select_related('user__user_profile').all()  # Show all records
     else:
-        records_list = Workday.objects.filter(user=request.user)  # Show only the user's records
+        records_list = Workday.objects.select_related('user__user_profile').filter(user=request.user)  # Show only the user's records
 
     # Pagination logic
     paginator = Paginator(records_list, 3)  # Show 3 records per page

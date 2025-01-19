@@ -57,7 +57,7 @@
         {% if records %}
         {% for record in records %}
         <tr>
-            <td>{{ record.firstname }} {{ record.lastname }} </td>
+            <td>{{ record.user.user_profile.firstname }} {{ record.user.user_profile.lastname }} </td>
             <td>{{ record.date }}</td>
             <td>{{ record.get_workday_type_display }}</td>
             <td>{{ record.get_month_display }}</td>

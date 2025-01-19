@@ -53,6 +53,6 @@ class UserEditForm(forms.ModelForm):
 
         # Make all fields read-only except for 'status' and 'manager_name'
         for field_name, field in self.fields.items():
-            if field_name not in ['status', 'manager_name']:
+            if field_name not in ['position', 'status', 'manager_name']:
                 field.widget.attrs['readonly'] = True  # Use readonly instead of disabled
                 field.required = False  # Make the field not required

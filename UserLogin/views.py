@@ -102,13 +102,6 @@ def user_list(request):
     users = UserProfile.objects.all()
     return render(request, 'UserLogin/user_list.html', {'users': users})
 
-# View user details
-# @login_required
-# @user_passes_test(is_admin_or_manager)
-# def user_detail(request, user_id):
-#     user_profile = get_object_or_404(UserProfile, id=user_id)
-#     return render(request, 'UserLogin/user_detail.html', {'user_profile': user_profile})
-
 # Edit user fields (position and manager)
 @login_required
 @user_passes_test(is_admin_or_manager)
