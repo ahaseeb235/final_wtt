@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 from wttapp.models import Workday
 from UserLogin.models import UserProfile
@@ -59,3 +59,21 @@ def create_record(request):
         form = WorkdayForm(user=request.user)
     
     return render(request, 'wttapp/create_record.html', {'form': form})
+
+@login_required
+def edit_workday(request, pk):
+    workday = get_object_or_404(Workday, id=pk)
+
+    # Ensure the user is the owner of the record or an admin/manager
+    if workday.user != request.user and not request.user.user_profile.position in ['System Admin', 'Manager']:
+        return redirect('home')  # Redirect unauthorized users
+
+    if request.method == 'POST':
+        form = WorkdayForm(request.POST, instance=workday, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = WorkdayForm(instance=workday, user=request.user)
+    
+    return render(request, 'wttapp/edit_workday.html', {'form': form})

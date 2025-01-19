@@ -65,7 +65,7 @@
             <td>{{ record.time_out }}</td>
             <td>{{ record.total_hours|floatformat:2 }}</td>
             <td>
-                <a href="#" class="btn btn-info btn-sm">Edit</a>
+                <a href="{% url 'edit_workday' record.id %}" class="btn btn-info btn-sm">Edit</a>
 
 
         </tr>
