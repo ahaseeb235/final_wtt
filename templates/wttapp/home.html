@@ -9,28 +9,47 @@
 <h3> Welcome {{user}}! 👋 </h3>
 <hr>
 
-<h4>Graphs</h4>
+<!-- <h4>Graphs</h4>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left Div -->
+        <!-- <div class="col-md-6 col-12">
+            <div class="custom-div">
+                <p class="text-muted">This is the left div for graph.</p>
+            </div>
+        </div> -->
+
+        <!-- Right Div -->
+        <!-- <div class="col-md-6 col-12">
+            <div class="custom-div">
+                <p class="text-muted">This is the right div for pragh. </p>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+
+<!-- <hr> -->
+<div class="container"></div>
 <div class="container-fluid">
     <div class="row">
         <!-- Left Div -->
         <div class="col-md-6 col-12">
-            <div class="custom-div">
-                <p class="text-muted">This is the left div for graph.</p>
-            </div>
+            
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'create_record' %}">Create new record &nbsp; <i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+            
         </div>
 
         <!-- Right Div -->
         <div class="col-md-6 col-12">
-            <div class="custom-div">
-                <p class="text-muted">This is the right div for pragh. </p>
+            <div class="col-md-6 col-12">
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'dashboard' %}">Dashboard &nbsp; <i class="fa fa-line-chart" aria-hidden="true"></i></a>
             </div>
         </div>
     </div>
 </div>
 
 
-<hr>
-<a class="btn btn-outline-primary btn-sm" href="{% url 'create_record' %}">Create new record &nbsp; <i class="fa fa-plus-circle" aria-hidden="true"></i></a>
 <br><br>
 
 {% if user_profile.status == 'Active' and user_profile.position in 'System Admin Manager' %}

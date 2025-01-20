@@ -77,3 +77,12 @@ def edit_workday(request, pk):
         form = WorkdayForm(instance=workday, user=request.user)
     
     return render(request, 'wttapp/edit_workday.html', {'form': form})
+
+@login_required
+def dashboard(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    context = {
+        'user': request.user,
+        'user_profile': user_profile,
+    }
+    return render(request, 'wttapp/dashboard.html', context)

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} wttApp - Dashboard {% endblock %}
+
+
+
+
+{% block content %}
+<h3> Dashboard for {{ user }}! </h3>
+<hr>
+
+<!-- Add your dashboard content here -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <p>Welcome to your dashboard, {{ user_profile.firstname }} {{ user_profile.lastname }}!</p>
+            <p>Your position: {{ user_profile.position }}</p>
+            <p>Your status: {{ user_profile.status }}</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
