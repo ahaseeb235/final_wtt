@@ -22,7 +22,13 @@ body {
 
 }
 
+.logo {
+    float: left; /* This will make the logo float to the left */
+}
 
+.navbar-toggler {
+    margin-right: 20px;
+}
 
 /* form layout */
 .form-name {

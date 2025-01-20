@@ -34,15 +34,16 @@
 <br><br>
 
 {% if user_profile.status == 'Active' and user_profile.position in 'System Admin Manager' %}
-    <h2>All Workday Entries</h2>
+    <h3>All Workday Entries</h3>
 {% else %}
-    <h2>Your Workday Entries</h2>
+    <h3>Your Workday Entries</h3>
 {% endif %}
 
 
 <table class="table table-hover table-striped  table-bordered text-center">
     <thead class="table-light">
         <tr>
+            <th scope="col">ID</th>
             <th scope="col">Name</th>
             <th scope="col">Date</th>
             <th scope="col">Type</th>
@@ -57,6 +58,7 @@
         {% if records %}
         {% for record in records %}
         <tr>
+            <td>{{ record.id }}</td>
             <td>{{ record.user.user_profile.firstname }} {{ record.user.user_profile.lastname }} </td>
             <td>{{ record.date }}</td>
             <td>{{ record.get_workday_type_display }}</td>
@@ -80,12 +82,12 @@
 <div class="pagination">
     <span class="step-links">
         {% if records.has_previous %}
-        <a class="btn btn-info btn-sm btn-secondary" href="?page=1">&laquo; First</a> &nbsp;
-        <a class="btn btn-info btn-sm btn-secondary" href="?page={{ records.previous_page_number }}">Previous</a>
+        <a class="btn btn-info btn-sm btn-info" href="?page=1">&laquo; First</a> &nbsp;
+        <a class="btn btn-info btn-sm btn-info" href="?page={{ records.previous_page_number }}">Previous</a> &nbsp;
         {% endif %}
 
         <span class="current">
-            Page {{ records.number }} of {{ records.paginator.num_pages }}
+            Page {{ records.number }} of {{ records.paginator.num_pages }} &nbsp;
         </span>
 
         {% if records.has_next %}
