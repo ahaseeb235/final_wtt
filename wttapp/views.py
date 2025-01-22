@@ -34,7 +34,7 @@ def home(request):
         records_list = Workday.objects.select_related('user__user_profile').filter(user=request.user)  # Show only the user's records
 
     # Pagination logic
-    paginator = Paginator(records_list, 3)  # Show 3 records per page
+    paginator = Paginator(records_list, 5)  # Show 3 records per page
     page = request.GET.get('page', 1)  # Get the current page number from the request
 
     try:
