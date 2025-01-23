@@ -23,6 +23,33 @@ flatpickr("input[name='time_out']", {
 
 
 
+
+
+// Hours Worked Chart
+// document.addEventListener('DOMContentLoaded', function () {
+//     const ctx = document.getElementById('chart-container').getContext('2d');
+//     const chart = new Chart(ctx, {
+//         type: 'bar',
+//         data: {
+//             labels: [{% for workday in workdays %}"{{ workday.user.get_full_name }}",{% endfor %}],
+//             datasets: [{
+//                 label: 'Total Hours Worked',
+//                 data: [{% for workday in workdays %}{{ workday.total_hours|floatformat:2 }},{% endfor %}],
+//                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
+//                 borderColor: 'rgba(75, 192, 192, 1)',
+//                 borderWidth: 1
+//             }]
+//         },
+//         options: {
+//             scales: {
+//                 y: {
+//                     beginAtZero: true
+//                 }
+//             }
+//         }
+//     });
+// });
+
 // Message/Notification timer
 
 // var message_timeout = document.getElementById("message-timer");

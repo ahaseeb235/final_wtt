@@ -7,12 +7,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from .forms import WorkdayForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from datetime import datetime
+import json
+
+
 
 class WorkdayListView(LoginRequiredMixin, ListView):
     model = Workday
     template_name = 'wttapp/home.html'
     context_object_name = 'records'
-    paginate_by = 3  # Add pagination directly in the ListView
+    paginate_by = 5  # Add pagination directly in the ListView
 
     def get_queryset(self):
         user_profile = UserProfile.objects.get(user=self.request.user)
@@ -80,9 +84,38 @@ def edit_workday(request, pk):
 
 @login_required
 def dashboard(request):
-    user_profile = UserProfile.objects.get(user=request.user)
+    user = request.user
+    user_profile = user.user_profile
+    
+    # Get the selected month from the request (default to current month)
+    selected_month = request.GET.get('month', datetime.now().strftime('%B'))
+    
+    # Filter Workday data based on user position
+    if user_profile.position in ['System Admin', 'Manager']:
+        workdays = Workday.objects.filter(month=selected_month)
+    else:
+        workdays = Workday.objects.filter(user=user, month=selected_month)
+    
+    # Prepare data for the chart
+    chart_labels = []
+    chart_data = []
+    
+    for workday in workdays:
+        chart_labels.append(workday.user.get_full_name())
+        chart_data.append(float(workday.total_hours))
+    
+    # Convert data to JSON for JavaScript
+    chart_labels_json = json.dumps(chart_labels)
+    chart_data_json = json.dumps(chart_data)
+    
+    # Prepare data for the template
     context = {
-        'user': request.user,
+        'workdays': workdays,
+        'selected_month': selected_month,
         'user_profile': user_profile,
+        'chart_labels_json': chart_labels_json,
+        'chart_data_json': chart_data_json,
+        'month_choices': Workday.MONTH_CHOICES, 
     }
+    
     return render(request, 'wttapp/dashboard.html', context)
