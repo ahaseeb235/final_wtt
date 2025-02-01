@@ -1,105 +1,130 @@
-<!-- wttapp/templates/wttapp/dashboard.html -->
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
-{% block title %}Dashboard{% endblock %}
+{% block title %} wttApp - Dashboard {% endblock %}
 
 {% block content %}
-<h3> Dashboard for {{ user }}! </h3>
+<h3> Dashboard for {{user}}! 👋 </h3>
 <hr>
 
-<!-- Month Selection Form -->
-<form method="get" action="">
-    <label for="month">Select Month:</label>
-    <select name="month" id="month" onchange="this.form.submit()">
-        {% for month in month_choices %}
-            <option value="{{ month.0 }}" {% if month.0 == selected_month %}selected{% endif %}>
-                {{ month.1 }}
-            </option>
-        {% endfor %}
-    </select>
-</form>
-<br>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar for Filters -->
+        <div class="col-md-3 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{% url 'dashboard' %}">
+                        <!-- Filter by Year -->
+                        <div class="form-group">
+                            <label for="year">Filter by Year:</label>
+                            <select name="year" id="year" class="form-control">
+                                <option value="">All Years</option>
+                                {% for year in years %}
+                                    <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
+                                        {{ year }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-<!-- Display Workday Data -->
-<h4>Records for the month of {{ selected_month }}</h4>
-<table>
-    <thead>
-        <tr>
-            <th>User</th>
-            <th>Date</th>
-            <th>Type</th>
-            <th>Time In</th>
-            <th>Time Out</th>
-            <th>Total Hours</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for workday in workdays %}
-        <tr>
-            
-            <td>
-                {% if workday.user.first_name or workday.user.last_name %}
-                    {{ workday.user.first_name }} {{ workday.user.last_name }}
-                {% else %}
-                    {{ workday.user.username }}
-                {% endif %}
-            </td>
-            <td>{{ workday.date }}</td>
-            <td>{{ workday.workday_type }}</td>
-            <td>{{ workday.time_in|default:"-" }}</td>
-            <td>{{ workday.time_out|default:"-" }}</td>
-            <td>{{ workday.total_hours|floatformat:2 }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                        <!-- Filter by Month -->
+                        <div class="form-group">
+                            <label for="month">Filter by Month:</label>
+                            <select name="month" id="month" class="form-control">
+                                <option value="">All Months</option>
+                                {% for month in months %}
+                                    <option value="{{ month.0 }}" {% if selected_month == month.0 %}selected{% endif %}>
+                                        {{ month.1 }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-<!-- Graphs Section -->
-<h4>Graphs</h4>
-<div id="chart-container mb-5">
-    <canvas id="workdayChart"></canvas>
+                        <!-- Filter by Workday Type -->
+                        <div class="form-group">
+                            <label for="workday_type">Filter by Workday Type:</label>
+                            <select name="workday_type" id="workday_type" class="form-control">
+                                <option value="">All Types</option>
+                                {% for type in workday_types %}
+                                    <option value="{{ type.0 }}" {% if selected_type == type.0 %}selected{% endif %}>
+                                        {{ type.1 }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Apply and Clear Filters Buttons -->
+                        <button type="submit" class="btn btn-primary btn-sm btn-block">Apply Filters</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-sm btn-block">Clear Filters</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-md-9 col-12">
+            <!-- Number Widgets -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Entries</h5>
+                            <p class="card-text display-4">{{ total_entries }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Hours</h5>
+                            <p class="card-text display-4">{{ total_hours|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workday Entries Table -->
+            <h3>Your Workday Entries</h3>
+            <table class="table table-hover table-striped table-bordered text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Month</th>
+                        <th scope="col">Year</th>
+                        <th scope="col">Time In</th>
+                        <th scope="col">Time Out</th>
+                        <th scope="col">Total Hours</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if workdays %}
+                        {% for record in workdays %}
+                            <tr>
+                                <td>{{ record.id }}</td>
+                                <td>{{ record.user.username }}</td>
+                                <td>{{ record.date }}</td>
+                                <td>{{ record.get_workday_type_display }}</td>
+                                <td>{{ record.get_month_display }}</td>
+                                <td>{{ record.date.year }}</td>
+                                <td>{{ record.time_in }}</td>
+                                <td>{{ record.time_out }}</td>
+                                <td>{{ record.total_hours|floatformat:2 }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="9">No workday entries found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-<br><br><br>
-<div class="container">
-    <h3>empty div</h3>
-</div>
-
-<!-- Include Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Render the Chart -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Parse JSON data passed from Django
-        const chartLabels = JSON.parse('{{ chart_labels_json|escapejs }}');
-        const chartData = JSON.parse('{{ chart_data_json|escapejs }}');
-        
-        // Get the canvas element
-        const ctx = document.getElementById('workdayChart').getContext('2d');
-        
-        // Render the chart
-        const chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: chartLabels,
-                datasets: [{
-                    label: 'Total Hours Worked',
-                    data: chartData,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    });
-</script>
 
 {% endblock %}
-

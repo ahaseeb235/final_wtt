@@ -7,8 +7,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from .forms import WorkdayForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from datetime import datetime
-import json
+from datetime import datetime,timedelta
+from django.http import JsonResponse
+from django.views import View
+from django.db.models import Q, Sum
+from django.db.models.functions import ExtractYear
 
 
 
@@ -38,7 +41,7 @@ def home(request):
         records_list = Workday.objects.select_related('user__user_profile').filter(user=request.user)  # Show only the user's records
 
     # Pagination logic
-    paginator = Paginator(records_list, 5)  # Show 3 records per page
+    paginator = Paginator(records_list, 5)  # Show 5 records per page
     page = request.GET.get('page', 1)  # Get the current page number from the request
 
     try:
@@ -82,40 +85,90 @@ def edit_workday(request, pk):
     
     return render(request, 'wttapp/edit_workday.html', {'form': form})
 
+
 @login_required
 def dashboard(request):
-    user = request.user
-    user_profile = user.user_profile
-    
-    # Get the selected month from the request (default to current month)
-    selected_month = request.GET.get('month', datetime.now().strftime('%B'))
-    
-    # Filter Workday data based on user position
-    if user_profile.position in ['System Admin', 'Manager']:
-        workdays = Workday.objects.filter(month=selected_month)
-    else:
-        workdays = Workday.objects.filter(user=user, month=selected_month)
-    
-    # Prepare data for the chart
-    chart_labels = []
-    chart_data = []
-    
-    for workday in workdays:
-        chart_labels.append(workday.user.get_full_name())
-        chart_data.append(float(workday.total_hours))
-    
-    # Convert data to JSON for JavaScript
-    chart_labels_json = json.dumps(chart_labels)
-    chart_data_json = json.dumps(chart_data)
-    
-    # Prepare data for the template
+    # Get all workday entries for the logged-in user, ordered by created_date descending
+    workdays = Workday.objects.filter(user=request.user).order_by('date')
+
+    # Filter by month
+    selected_month = request.GET.get('month')
+    if selected_month:
+        workdays = workdays.filter(month=selected_month)
+
+    # Filter by workday type
+    selected_type = request.GET.get('workday_type')
+    if selected_type:
+        workdays = workdays.filter(workday_type=selected_type)
+
+    # Filter by year (extracted from the date field)
+    selected_year = request.GET.get('year')
+    if selected_year:
+        workdays = workdays.filter(date__year=selected_year)
+
+    # Get unique years for the year filter dropdown
+    years = Workday.objects.filter(user=request.user).annotate(
+        yearView=ExtractYear('date')
+    ).values_list('yearView', flat=True).distinct()
+
+    # Calculate totals for the selected filters
+    total_entries = workdays.count()
+
+    # Manually calculate total_hours since it's a property
+    total_hours = sum(record.total_hours for record in workdays)
+
+    # Pass the filtered workdays and filter options to the template
     context = {
         'workdays': workdays,
+        'months': Workday.MONTH_CHOICES,
+        'workday_types': Workday.WORKDAY_TYPE_CHOICES,
+        'years': years,
         'selected_month': selected_month,
-        'user_profile': user_profile,
-        'chart_labels_json': chart_labels_json,
-        'chart_data_json': chart_data_json,
-        'month_choices': Workday.MONTH_CHOICES, 
+        'selected_type': selected_type,
+        'selected_year': selected_year,
+        'total_entries': total_entries,
+        'total_hours': total_hours,
     }
-    
     return render(request, 'wttapp/dashboard.html', context)
+
+class DashboardDataView(View):
+    def get(self, request, *args, **kwargs):
+        user_profile = UserProfile.objects.get(user=request.user)
+        today = datetime.today()
+        start_of_month = today.replace(day=1)
+        end_of_month = (start_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+
+        if user_profile.position in ['Manager', 'System Admin']:
+            workdays = Workday.objects.filter(date__range=[start_of_month, end_of_month])
+        else:
+            workdays = Workday.objects.filter(user=request.user, date__range=[start_of_month, end_of_month])
+
+        total_hours_this_month = sum(workday.total_hours for workday in workdays)
+        average_hours_per_day = total_hours_this_month / workdays.count() if workdays.count() > 0 else 0
+
+        # Example data for leave balance and upcoming holidays
+        sick_leave_balance = 5  # Replace with actual logic
+        annual_leave_balance = 10  # Replace with actual logic
+        upcoming_holidays = ['2023-12-25', '2024-01-01']  # Replace with actual logic
+
+        # Example data for charts
+        hours_worked_per_day = {
+            'labels': ['2023-11-01', '2023-11-02', '2023-11-03'],
+            'data': [8, 7.5, 8.5]
+        }
+        workday_type_distribution = {
+            'labels': ['Work', 'Sick Leave', 'Annual Leave', 'Bank Holiday'],
+            'data': [20, 2, 1, 1]
+        }
+
+        data = {
+            'total_hours_this_month': total_hours_this_month,
+            'average_hours_per_day': average_hours_per_day,
+            'sick_leave_balance': sick_leave_balance,
+            'annual_leave_balance': annual_leave_balance,
+            'upcoming_holidays': upcoming_holidays,
+            'hours_worked_per_day': hours_worked_per_day,
+            'workday_type_distribution': workday_type_distribution
+        }
+
+        return JsonResponse(data)
