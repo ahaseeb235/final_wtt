@@ -3,7 +3,7 @@
 {% block title %} wttApp - Dashboard {% endblock %}
 
 {% block content %}
-<h3> Dashboard for {{user}}! 👋 </h3>
+<h3> Welcome {{user}}! 👋 </h3>
 <hr>
 
 <div class="container-fluid">
@@ -85,6 +85,30 @@
                 </div>
             </div>
 
+            <!-- Graphs -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Workday Types Distribution</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="workdayTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Monthly Hours</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="monthlyHoursChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Workday Entries Table -->
             <h3>Your Workday Entries</h3>
             <table class="table table-hover table-striped table-bordered text-center">
@@ -127,4 +151,91 @@
     </div>
 </div>
 
+<br><br><br>
+
+<!-- Chart.js Scripts -->
+<script>
+    // Workday Types Distribution Chart
+    const workdayTypeChartElement = document.getElementById('workdayTypeChart');
+    if (workdayTypeChartElement) { // Check if the chart element exists
+        const workdayTypeCtx = workdayTypeChartElement.getContext('2d');
+        const workdayTypeChart = new Chart(workdayTypeCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Work', 'Sick Leave', 'Annual Leave', 'Bank Holiday'],
+                datasets: [{
+                    label: 'Workday Types',
+                    data: [
+                        {{ workday_type_counts.Work|default:'0' }},
+                        {{ workday_type_counts.Sick_Leave|default:"0" }},
+                        {{ workday_type_counts.Annual_Leave|default:"0" }},
+                        {{ workday_type_counts.Bank_Holiday|default:"0" }}
+                    ],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Workday Types Distribution'
+                    }
+                }
+            }
+        });
+    }
+
+    // Monthly Hours Chart
+    const monthlyHoursChartElement = document.getElementById('monthlyHoursChart');
+    if (monthlyHoursChartElement) { // Check if the chart element exists
+        const monthlyHoursCtx = monthlyHoursChartElement.getContext('2d');
+        const monthlyHoursChart = new Chart(monthlyHoursCtx, {
+            type: 'bar',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                datasets: [{
+                    label: 'Total Hours',
+                    data: [
+                        {{ monthly_hours.January|default:0 }},
+                        {{ monthly_hours.February|default:0 }},
+                        {{ monthly_hours.March|default:0 }},
+                        {{ monthly_hours.April|default:0 }},
+                        {{ monthly_hours.May|default:0 }},
+                        {{ monthly_hours.June|default:0 }},
+                        {{ monthly_hours.July|default:0 }},
+                        {{ monthly_hours.August|default:0 }},
+                        {{ monthly_hours.September|default:0 }},
+                        {{ monthly_hours.October|default:0 }},
+                        {{ monthly_hours.November|default:0 }},
+                        {{ monthly_hours.December|default:0 }}
+                    ],
+                    backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Monthly Hours'
+                    }
+                }
+            }
+        });
+    }
+</script>
 {% endblock %}

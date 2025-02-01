@@ -10,7 +10,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import datetime,timedelta
 from django.http import JsonResponse
 from django.views import View
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum, Count
 from django.db.models.functions import ExtractYear
 
 
@@ -113,9 +113,19 @@ def dashboard(request):
 
     # Calculate totals for the selected filters
     total_entries = workdays.count()
-
-    # Manually calculate total_hours since it's a property
     total_hours = sum(record.total_hours for record in workdays)
+
+    # Data for Workday Types Distribution Chart
+    workday_type_counts = workdays.values('workday_type').annotate(count=Count('id'))
+    workday_type_counts = {item['workday_type']: item['count'] for item in workday_type_counts}
+
+    # Data for Monthly Hours Chart
+    monthly_hours = {}
+    for month in Workday.MONTH_CHOICES:
+        month_name = month[0]
+        monthly_hours[month_name] = sum(
+            record.total_hours for record in workdays if record.month == month_name
+        )
 
     # Pass the filtered workdays and filter options to the template
     context = {
@@ -128,6 +138,8 @@ def dashboard(request):
         'selected_year': selected_year,
         'total_entries': total_entries,
         'total_hours': total_hours,
+        'workday_type_counts': workday_type_counts,
+        'monthly_hours': monthly_hours,
     }
     return render(request, 'wttapp/dashboard.html', context)
 

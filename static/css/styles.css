@@ -7,8 +7,14 @@ a {
     text-decoration: none;
 }
 
-body {
+html, body {
     margin: 0;
+    height: 100%;
+}
+
+
+body {
+    display: flex;
     background-color: #fafafa;
 }
 
@@ -46,6 +52,7 @@ footer {
     position: fixed;
     left: 0;
     bottom: 0;
+    margin-top: auto;
     width: 100%;
     background-color: #1e1e1e;
     color: white;
