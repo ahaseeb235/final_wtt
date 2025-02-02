@@ -8,8 +8,10 @@ a {
 }
 
 html, body {
-    margin: 0;
     height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 
@@ -29,7 +31,7 @@ body {
 }
 
 .logo {
-    float: left; /* This will make the logo float to the left */
+    float: left; 
 }
 
 .navbar-toggler {
@@ -48,8 +50,10 @@ body {
 
 /* footer */
 
+
+
 footer {
-    position: fixed;
+    position:fixed;
     left: 0;
     bottom: 0;
     margin-top: auto;
@@ -59,6 +63,13 @@ footer {
     text-align: center;
     padding: 0 40px;
     text-decoration: none;
+}
+
+footer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
 }
 
 

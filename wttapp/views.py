@@ -88,11 +88,16 @@ def edit_workday(request, pk):
 
 @login_required
 def dashboard(request):
-    # Get all workday entries for the logged-in user, ordered by created_date descending
-    workdays = Workday.objects.filter(user=request.user).order_by('date')
+    # Get the current month as a string (e.g., 'January', 'February', etc.)
+    current_month = datetime.now().strftime('%B')
 
-    # Filter by month
-    selected_month = request.GET.get('month')
+    # Default to the current month if no month is selected
+    selected_month = request.GET.get('month', current_month)
+
+    # Get all workday entries for the logged-in user, ordered by created_date descending
+    workdays = Workday.objects.filter(user=request.user).order_by('-date')
+
+    # Apply month filter
     if selected_month:
         workdays = workdays.filter(month=selected_month)
 
@@ -110,22 +115,31 @@ def dashboard(request):
     years = Workday.objects.filter(user=request.user).annotate(
         yearView=ExtractYear('date')
     ).values_list('yearView', flat=True).distinct()
-
+    
     # Calculate totals for the selected filters
     total_entries = workdays.count()
     total_hours = sum(record.total_hours for record in workdays)
 
-    # Data for Workday Types Distribution Chart
-    workday_type_counts = workdays.values('workday_type').annotate(count=Count('id'))
-    workday_type_counts = {item['workday_type']: item['count'] for item in workday_type_counts}
+    # Calculate workday type counts
+    workday_type_counts = {
+        'Work': workdays.filter(workday_type='Work').count(),
+        'Sick_Leave': workdays.filter(workday_type='Sick Leave').count(),
+        'Annual_Leave': workdays.filter(workday_type='Annual Leave').count(),
+        'Bank_Holiday': workdays.filter(workday_type='Bank Holiday').count(),
+    }
 
-    # Data for Monthly Hours Chart
-    monthly_hours = {}
-    for month in Workday.MONTH_CHOICES:
-        month_name = month[0]
-        monthly_hours[month_name] = sum(
-            record.total_hours for record in workdays if record.month == month_name
-        )
+    # Calculate monthly hours
+    monthly_hours = {month: 0 for month in [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ]}
+    for workday in workdays:
+        month = workday.date.strftime('%B')
+        monthly_hours[month] += workday.total_hours or 0
+
+    # Get unique years and months for filters
+    years = Workday.objects.dates('date', 'year').values_list('date__year', flat=True).distinct()
+    months = Workday.MONTH_CHOICES
 
     # Pass the filtered workdays and filter options to the template
     context = {
@@ -142,45 +156,3 @@ def dashboard(request):
         'monthly_hours': monthly_hours,
     }
     return render(request, 'wttapp/dashboard.html', context)
-
-class DashboardDataView(View):
-    def get(self, request, *args, **kwargs):
-        user_profile = UserProfile.objects.get(user=request.user)
-        today = datetime.today()
-        start_of_month = today.replace(day=1)
-        end_of_month = (start_of_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-
-        if user_profile.position in ['Manager', 'System Admin']:
-            workdays = Workday.objects.filter(date__range=[start_of_month, end_of_month])
-        else:
-            workdays = Workday.objects.filter(user=request.user, date__range=[start_of_month, end_of_month])
-
-        total_hours_this_month = sum(workday.total_hours for workday in workdays)
-        average_hours_per_day = total_hours_this_month / workdays.count() if workdays.count() > 0 else 0
-
-        # Example data for leave balance and upcoming holidays
-        sick_leave_balance = 5  # Replace with actual logic
-        annual_leave_balance = 10  # Replace with actual logic
-        upcoming_holidays = ['2023-12-25', '2024-01-01']  # Replace with actual logic
-
-        # Example data for charts
-        hours_worked_per_day = {
-            'labels': ['2023-11-01', '2023-11-02', '2023-11-03'],
-            'data': [8, 7.5, 8.5]
-        }
-        workday_type_distribution = {
-            'labels': ['Work', 'Sick Leave', 'Annual Leave', 'Bank Holiday'],
-            'data': [20, 2, 1, 1]
-        }
-
-        data = {
-            'total_hours_this_month': total_hours_this_month,
-            'average_hours_per_day': average_hours_per_day,
-            'sick_leave_balance': sick_leave_balance,
-            'annual_leave_balance': annual_leave_balance,
-            'upcoming_holidays': upcoming_holidays,
-            'hours_worked_per_day': hours_worked_per_day,
-            'workday_type_distribution': workday_type_distribution
-        }
-
-        return JsonResponse(data)
