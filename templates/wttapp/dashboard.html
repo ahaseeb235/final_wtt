@@ -4,6 +4,15 @@
 
 {% block content %}
 <h3> Welcome {{ user }}! 👋 </h3>
+{% if user_profile.position in 'Manager System Admin' %}
+    <div class="text-muted">
+        You are viewing <strong>all data</strong> as a {{ user_profile.position }}.
+    </div>
+{% else %}
+    <div class="text-muted">
+        You will only view <strong>your own data</strong>.
+    </div>
+{% endif %}
 <hr>
 
 <div class="container-fluid">
@@ -15,11 +24,27 @@
                     <h5>Filters &nbsp;<i class="fa fa-filter" aria-hidden="true"></i></h5>
                 </div>
                 <div class="card-body">
+                    <!-- Single form for all filters -->
                     <form method="get" action="{% url 'dashboard' %}">
+                        <!-- User Filter (only for Managers and System Admins) -->
+                        {% if user_profile.position in 'Manager System Admin' %}
+                            <div class="form-group">
+                                <label for="user">Filter by User:</label>
+                                <select name="user" id="user" class="form-control">
+                                    <option value="">All Users</option>
+                                    {% for user in users %}
+                                        <option value="{{ user.id }}" {% if selected_user == user.id %}selected{% endif %}>
+                                            {{ user.username }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        {% endif %}
+
                         <!-- Filter by Year -->
                         <div class="form-group">
                             <label for="year">Filter by Year:</label>
-                            <select name="year" id="year" class="form-control">
+                            <select name="year" id="year" class="form-control text-muted">
                                 <option value="">All Years</option>
                                 {% for year in years %}
                                     <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
@@ -32,7 +57,7 @@
                         <!-- Filter by Month -->
                         <div class="form-group">
                             <label for="month">Filter by Month:</label>
-                            <select name="month" id="month" class="form-control">
+                            <select name="month" id="month" class="form-control text-muted">
                                 <option value="">All Months</option>
                                 {% for month in months %}
                                     <option value="{{ month.0 }}" {% if selected_month == month.0 %}selected{% endif %}>
@@ -45,7 +70,7 @@
                         <!-- Filter by Workday Type -->
                         <div class="form-group">
                             <label for="workday_type">Filter by Workday Type:</label>
-                            <select name="workday_type" id="workday_type" class="form-control">
+                            <select name="workday_type" id="workday_type" class="form-control text-muted">
                                 <option value="">All Types</option>
                                 {% for type in workday_types %}
                                     <option value="{{ type.0 }}" {% if selected_type == type.0 %}selected{% endif %}>
@@ -100,7 +125,7 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5>Monthly Hours</h5>
+                            <h5>Hours Worked in {{ previous_month }} vs {{ current_month }}</h5>
                         </div>
                         <div class="card-body">
                             <canvas id="monthlyHoursChart"></canvas>
@@ -153,92 +178,91 @@
 
 <br><br><br>
 
-<!-- Chart.js Scripts -->
 <script>
-   // Workday Types Distribution Chart
-   const workdayTypeChartElement = document.getElementById("workdayTypeChart");
-    if (workdayTypeChartElement) {
-        const workdayTypeCtx = workdayTypeChartElement.getContext("2d");
-        const workdayTypeChart = new Chart(workdayTypeCtx, {
-            type: "pie",
-            data: {
-                labels: ["Work", "Sick Leave", "Annual Leave", "Bank Holiday"],
-                datasets: [{
-                    label: "Workday Types",
-                    data: [
-                        {{ workday_type_counts.Work|default:0 }},
-                        {{ workday_type_counts.Sick_Leave|default:0 }},
-                        {{ workday_type_counts.Annual_Leave|default:0 }},
-                        {{ workday_type_counts.Bank_Holiday|default:0 }}
-                    ],
-                    backgroundColor: [
-                        "rgba(54, 162, 235, 0.8)",
-                        "rgba(255, 99, 132, 0.8)",
-                        "rgba(75, 192, 192, 0.8)",
-                        "rgba(153, 102, 255, 0.8)"
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: "top",
-                    },
-                    title: {
-                        display: true,
-                        text: "Workday Types Distribution"
-                    }
-                }
-            }
-        });
-    }
-    // Monthly Hours Chart
-    const monthlyHoursChartElement = document.getElementById("monthlyHoursChart");
-    if (monthlyHoursChartElement) {
-        const monthlyHoursCtx = monthlyHoursChartElement.getContext("2d");
-        const monthlyHoursChart = new Chart(monthlyHoursCtx, {
-            type: "bar",
-            data: {
-                labels: [
-                    "January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"
+// Workday Types Distribution Chart
+const workdayTypeChartElement = document.getElementById("workdayTypeChart");
+if (workdayTypeChartElement) {
+    const workdayTypeCtx = workdayTypeChartElement.getContext("2d");
+    const workdayTypeChart = new Chart(workdayTypeCtx, {
+        type: "pie",
+        data: {
+            labels: ["Work", "Sick Leave", "Annual Leave", "Bank Holiday"],
+            datasets: [{
+                label: "Workday Types",
+                data: [
+                    {{ workday_type_counts.Work|default:0 }},
+                    {{ workday_type_counts.Sick_Leave|default:0 }},
+                    {{ workday_type_counts.Annual_Leave|default:0 }},
+                    {{ workday_type_counts.Bank_Holiday|default:0 }}
                 ],
-                datasets: [{
-                    label: "Total Hours",
-                    data: [
-                        {{ monthly_hours.January|default:0 }},
-                        {{ monthly_hours.February|default:0 }},
-                        {{ monthly_hours.March|default:0 }},
-                        {{ monthly_hours.April|default:0 }},
-                        {{ monthly_hours.May|default:0 }},
-                        {{ monthly_hours.June|default:0 }},
-                        {{ monthly_hours.July|default:0 }},
-                        {{ monthly_hours.August|default:0 }},
-                        {{ monthly_hours.September|default:0 }},
-                        {{ monthly_hours.October|default:0 }},
-                        {{ monthly_hours.November|default:0 }},
-                        {{ monthly_hours.December|default:0 }}
-                    ],
-                    backgroundColor: "rgba(75, 192, 192, 0.8)",
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: "top",
-                    },
-                    title: {
-                        display: true,
-                        text: "Monthly Hours"
-                    }
+                backgroundColor: [
+                    "rgba(54, 162, 235, 0.8)",
+                    "rgba(255, 99, 132, 0.8)",
+                    "rgba(75, 192, 192, 0.8)",
+                    "rgba(153, 102, 255, 0.8)"
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "top",
+                },
+                title: {
+                    display: true,
+                    text: "Workday Types Distribution"
                 }
             }
-        });
-    }
+        }
+    });
+}
 
+// Monthly Hours Chart
+const monthlyHoursChartElement = document.getElementById("monthlyHoursChart");
+if (monthlyHoursChartElement) {
+    const monthlyHoursCtx = monthlyHoursChartElement.getContext("2d");
+    const monthlyHoursChart = new Chart(monthlyHoursCtx, {
+        type: "bar",
+        data: {
+            labels: [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ],
+            datasets: [{
+                label: "Total Hours",
+                data: [
+                    {{ monthly_hours.January|default:0 }},
+                    {{ monthly_hours.February|default:0 }},
+                    {{ monthly_hours.March|default:0 }},
+                    {{ monthly_hours.April|default:0 }},
+                    {{ monthly_hours.May|default:0 }},
+                    {{ monthly_hours.June|default:0 }},
+                    {{ monthly_hours.July|default:0 }},
+                    {{ monthly_hours.August|default:0 }},
+                    {{ monthly_hours.September|default:0 }},
+                    {{ monthly_hours.October|default:0 }},
+                    {{ monthly_hours.November|default:0 }},
+                    {{ monthly_hours.December|default:0 }}
+                ],
+                backgroundColor: "rgba(75, 192, 192, 0.8)",
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "top",
+                },
+                title: {
+                    display: true,
+                    text: "Monthly Hours"
+                }
+            }
+        }
+    });
+}
 </script>
 {% endblock %}

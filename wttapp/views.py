@@ -6,6 +6,7 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from .forms import WorkdayForm
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import datetime,timedelta
 from django.http import JsonResponse
@@ -36,9 +37,9 @@ def home(request):
     
     # Check if the user is an active System Admin or Manager
     if user_profile.status == 'Active' and user_profile.position in ['System Admin', 'Manager']:
-        records_list = Workday.objects.select_related('user__user_profile').all()  # Show all records
+        records_list = Workday.objects.select_related('user__user_profile').all().order_by('-date')  # Show all records
     else:
-        records_list = Workday.objects.select_related('user__user_profile').filter(user=request.user)  # Show only the user's records
+        records_list = Workday.objects.select_related('user__user_profile').filter(user=request.user).order_by('-date')  # Show only the user's records
 
     # Pagination logic
     paginator = Paginator(records_list, 5)  # Show 5 records per page
@@ -88,38 +89,58 @@ def edit_workday(request, pk):
 
 @login_required
 def dashboard(request):
-    # Get the current month as a string (e.g., 'January', 'February', etc.)
+    user_profile = UserProfile.objects.get(user=request.user)
+    
+    # Get the current date, month, and year
+    current_date = datetime.now()
     current_month = datetime.now().strftime('%B')
-
+    current_year = datetime.now().year
+    
+    # Calculate the previous month and year
+    previous_date = current_date - timedelta(days=current_date.day)
+    previous_month = previous_date.strftime('%B') 
+    previous_year = previous_date.year
+    
     # Default to the current month if no month is selected
     selected_month = request.GET.get('month', current_month)
-
-    # Get all workday entries for the logged-in user, ordered by created_date descending
-    workdays = Workday.objects.filter(user=request.user).order_by('-date')
-
+    
+    # Filter by workday type
+    selected_type = request.GET.get('workday_type')
+    
+    # Filter by year
+    selected_year = request.GET.get('year')
+    
+    # Filter by user (only for Managers and System Admins)
+    selected_user = request.GET.get('user')
+    
+    # Check if the user is a Manager or System Admin
+    if user_profile.position in ['Manager', 'System Admin']:
+        # Show all data for Managers and System Admins
+        workdays = Workday.objects.all().order_by('-date')
+        
+        # Apply user filter if selected
+        if selected_user:
+            workdays = workdays.filter(user_id=selected_user)
+    else:
+        # Show only the user's data for Staff
+        workdays = Workday.objects.filter(user=request.user).order_by('-date')
+    
     # Apply month filter
     if selected_month:
         workdays = workdays.filter(month=selected_month)
-
-    # Filter by workday type
-    selected_type = request.GET.get('workday_type')
+    
+    # Apply workday type filter
     if selected_type:
         workdays = workdays.filter(workday_type=selected_type)
-
-    # Filter by year (extracted from the date field)
-    selected_year = request.GET.get('year')
+    
+    # Apply year filter
     if selected_year:
         workdays = workdays.filter(date__year=selected_year)
-
-    # Get unique years for the year filter dropdown
-    years = Workday.objects.filter(user=request.user).annotate(
-        yearView=ExtractYear('date')
-    ).values_list('yearView', flat=True).distinct()
     
     # Calculate totals for the selected filters
     total_entries = workdays.count()
     total_hours = sum(record.total_hours for record in workdays)
-
+    
     # Calculate workday type counts
     workday_type_counts = {
         'Work': workdays.filter(workday_type='Work').count(),
@@ -127,7 +148,7 @@ def dashboard(request):
         'Annual_Leave': workdays.filter(workday_type='Annual Leave').count(),
         'Bank_Holiday': workdays.filter(workday_type='Bank Holiday').count(),
     }
-
+    
     # Calculate monthly hours
     monthly_hours = {month: 0 for month in [
         'January', 'February', 'March', 'April', 'May', 'June',
@@ -136,11 +157,13 @@ def dashboard(request):
     for workday in workdays:
         month = workday.date.strftime('%B')
         monthly_hours[month] += workday.total_hours or 0
-
-    # Get unique years and months for filters
+    
+    # Get unique years for the year filter dropdown
     years = Workday.objects.dates('date', 'year').values_list('date__year', flat=True).distinct()
-    months = Workday.MONTH_CHOICES
-
+    
+    # USer filter (only for Managers and System Admins)
+    users = User.objects.all() if user_profile.position in ['Manager', 'System Admin'] else None
+    
     # Pass the filtered workdays and filter options to the template
     context = {
         'workdays': workdays,
@@ -154,5 +177,12 @@ def dashboard(request):
         'total_hours': total_hours,
         'workday_type_counts': workday_type_counts,
         'monthly_hours': monthly_hours,
+        'current_month': current_month,
+        'previous_month': previous_month,
+        'curret_year': current_year,
+        'previous_year': previous_year,
+        'user_profile': user_profile,
+        'users': users,  # Pass users for the filter dropdown
+        'selected_user': int(selected_user) if selected_user else None,
     }
     return render(request, 'wttapp/dashboard.html', context)
