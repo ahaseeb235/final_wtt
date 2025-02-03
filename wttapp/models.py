@@ -65,7 +65,7 @@ class Workday(models.Model):
     
     #to validate that time_in and time_out are provided only when required.
     def clean(self):
-        if self.workday_type in ['Sick Leave', 'Annual Leave', 'Bank Holiday']:
+        if self.workday_type in ['Sick Leave', 'Bank Holiday']:
             if self.time_in or self.time_out:
                 raise ValueError(
                     f"Time In and Time Out should not be provided for {self.get_workday_type_display()}."

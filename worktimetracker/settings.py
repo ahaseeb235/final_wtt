@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap4', # This is crispy_bootstrap4
     'crispy_bootstrap5', # This is crispy_bootstrap5
     'django_cleanup', # This is django_cleanup
+    'chartjs', # This is chartjs
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"

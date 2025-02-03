@@ -8,10 +8,10 @@ from django.contrib.auth.decorators import login_required
 from .forms import WorkdayForm
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta, time
 from django.http import JsonResponse
 from django.views import View
-from django.db.models import Q, Sum, Count
+from django.db.models import Q, Sum, Count, F, ExpressionWrapper, fields
 from django.db.models.functions import ExtractYear
 
 
@@ -107,11 +107,24 @@ def dashboard(request):
     # Filter by workday type
     selected_type = request.GET.get('workday_type')
     
-    # Filter by year
-    selected_year = request.GET.get('year')
+    # Filter by year (default to current year)
+    selected_year = request.GET.get('year', current_year)
+    
+    # Handle empty selected_year (convert to current year)
+    if selected_year == '':
+        selected_year = current_year
     
     # Filter by user (only for Managers and System Admins)
     selected_user = request.GET.get('user')
+    
+    # Handle empty selected_user (convert to None)
+    if selected_user == '':
+        selected_user = None
+    
+    # Get the selected user's username (if a user is selected)
+    selected_user_username = None
+    if selected_user:
+        selected_user_username = User.objects.get(id=selected_user).username
     
     # Check if the user is a Manager or System Admin
     if user_profile.position in ['Manager', 'System Admin']:
@@ -133,13 +146,28 @@ def dashboard(request):
     if selected_type:
         workdays = workdays.filter(workday_type=selected_type)
     
-    # Apply year filter
-    if selected_year:
-        workdays = workdays.filter(date__year=selected_year)
+    # Apply year filter (default to current year)
+    workdays = workdays.filter(date__year=selected_year)
+    
+    # Exclude records where time_in or time_out is None
+    workdays = workdays.exclude(time_in__isnull=True).exclude(time_out__isnull=True)
     
     # Calculate totals for the selected filters
     total_entries = workdays.count()
-    total_hours = sum(record.total_hours for record in workdays)
+    
+    # Calculate total hours dynamically
+    total_hours = timedelta()
+    for workday in workdays:
+        # Combine date with time_in and time_out to create datetime objects
+        datetime_in = datetime.combine(workday.date, workday.time_in)
+        datetime_out = datetime.combine(workday.date, workday.time_out)
+        
+        # Calculate duration
+        duration = datetime_out - datetime_in
+        total_hours += duration
+    
+    # Convert total_hours to hours
+    total_hours = total_hours.total_seconds() / 3600  # Convert timedelta to hours
     
     # Calculate workday type counts
     workday_type_counts = {
@@ -149,19 +177,52 @@ def dashboard(request):
         'Bank_Holiday': workdays.filter(workday_type='Bank Holiday').count(),
     }
     
-    # Calculate monthly hours
+    # Calculate total Annual Leave hours for the current year
+    annual_leave_hours = timedelta()
+    if user_profile.position in ['Manager', 'System Admin']:
+        # For Managers and System Admins, calculate Annual Leave for all users (or selected user)
+        if selected_user:
+            annual_workdays = workdays.filter(workday_type='Annual Leave')
+        else:
+            annual_workdays = Workday.objects.filter(
+                workday_type='Annual Leave',
+                date__year=current_year
+            ).exclude(time_in__isnull=True).exclude(time_out__isnull=True)
+    else:
+        # For Staff, calculate Annual Leave for the logged-in user
+        annual_workdays = workdays.filter(
+            workday_type='Annual Leave',
+            user=request.user
+        )
+    
+    for workday in annual_workdays:
+        # Combine date with time_in and time_out to create datetime objects
+        datetime_in = datetime.combine(workday.date, workday.time_in)
+        datetime_out = datetime.combine(workday.date, workday.time_out)
+        
+        # Calculate duration
+        duration = datetime_out - datetime_in
+        annual_leave_hours += duration
+    
+    # Convert annual_leave_hours to hours
+    annual_leave_hours = annual_leave_hours.total_seconds() / 3600  # Convert timedelta to hours
+    
+    # Calculate monthly hours for the current year
     monthly_hours = {month: 0 for month in [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
     ]}
     for workday in workdays:
         month = workday.date.strftime('%B')
-        monthly_hours[month] += workday.total_hours or 0
+        datetime_in = datetime.combine(workday.date, workday.time_in)
+        datetime_out = datetime.combine(workday.date, workday.time_out)
+        duration = (datetime_out - datetime_in).total_seconds() / 3600  # Convert timedelta to hours
+        monthly_hours[month] += duration
     
     # Get unique years for the year filter dropdown
     years = Workday.objects.dates('date', 'year').values_list('date__year', flat=True).distinct()
     
-    # USer filter (only for Managers and System Admins)
+    # User filter (only for Managers and System Admins)
     users = User.objects.all() if user_profile.position in ['Manager', 'System Admin'] else None
     
     # Pass the filtered workdays and filter options to the template
@@ -179,10 +240,12 @@ def dashboard(request):
         'monthly_hours': monthly_hours,
         'current_month': current_month,
         'previous_month': previous_month,
-        'curret_year': current_year,
+        'current_year': current_year,
         'previous_year': previous_year,
         'user_profile': user_profile,
         'users': users,  # Pass users for the filter dropdown
         'selected_user': int(selected_user) if selected_user else None,
+        'selected_user_username': selected_user_username,  # Pass the selected user's username
+        'annual_leave_hours': annual_leave_hours,  # Pass Annual Leave hours to the template
     }
     return render(request, 'wttapp/dashboard.html', context)

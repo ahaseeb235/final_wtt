@@ -46,11 +46,11 @@
                             <label for="year">Filter by Year:</label>
                             <select name="year" id="year" class="form-control text-muted">
                                 <option value="">All Years</option>
-                                {% for year in years %}
-                                    <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
-                                        {{ year }}
-                                    </option>
-                                {% endfor %}
+                                    {% for year in years %}
+                                        <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>
+                                            {{ year }}
+                                        </option>
+                                    {% endfor %}
                             </select>
                         </div>
 
@@ -92,19 +92,79 @@
         <div class="col-md-9 col-12">
             <!-- Number Widgets -->
             <div class="row mb-4">
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="card text-white bg-primary">
                         <div class="card-body">
                             <h5 class="card-title">Total Entries</h5>
+                            <p class="fst-italic">
+                                {% if user_profile.position == 'Manager' or user_profile.position == 'System Admin' %}
+                                    {% if selected_user %}
+                                        (for {{ selected_user_username }}) 
+                                    {% else %}
+                                        <!-- Display total Annual Leave for all users -->
+                                        (All Users)
+                                    {% endif %}
+                                {% else %}
+                                    <!-- Display logged-in user's Annual Leave hours -->
+                                    {{ selected_user_username }}
+                                {% endif %}
+                            </p>
                             <p class="card-text display-4">{{ total_entries }}</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="card text-white bg-success">
                         <div class="card-body">
                             <h5 class="card-title">Total Hours</h5>
+                            <p class="fst-italic">
+                                {% if user_profile.position == 'Manager' or user_profile.position == 'System Admin' %}
+                                    {% if selected_user %}
+                                        (for {{ selected_user_username }}) 
+                                    {% else %}
+                                        <!-- Display total Annual Leave for all users -->
+                                        (All Users)
+                                    {% endif %}
+                                {% else %}
+                                    <!-- Display logged-in user's Annual Leave hours -->
+                                    {{ selected_user_username }}
+                                {% endif %}
+                            </p>
                             <p class="card-text display-4">{{ total_hours|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Annual Leave Taken ({{ current_year }})</h5>
+                            <p class="fst-italic">
+                                {% if user_profile.position == 'Manager' or user_profile.position == 'System Admin' %}
+                                    {% if selected_user %}
+                                        (for {{ selected_user_username }}) 
+                                    {% else %}
+                                        <!-- Display total Annual Leave for all users -->
+                                        (All Users)
+                                    {% endif %}
+                                {% else %}
+                                    <!-- Display logged-in user's Annual Leave hours -->
+                                    {{ selected_user_username }}
+                                {% endif %}
+                            </p>
+                            <p class="card-text display-4">
+                                {% if user_profile.position == 'Manager' or user_profile.position == 'System Admin' %}
+                                    {% if selected_user %}
+                                        {{ annual_leave_hours }} hours
+                                    {% else %}
+                                        <!-- Display total Annual Leave for all users -->
+                                        {{ annual_leave_hours }} hours
+                                    {% endif %}
+                                {% else %}
+                                    <!-- Display logged-in user's Annual Leave hours -->
+                                    {{ annual_leave_hours }} hours
+                                {% endif %}
+                                
+                            </p>
                         </div>
                     </div>
                 </div>
