@@ -30,7 +30,7 @@
                         {% if user_profile.position in 'Manager System Admin' %}
                             <div class="form-group">
                                 <label for="user">Filter by User:</label>
-                                <select name="user" id="user" class="form-control">
+                                <select name="user" id="user" class="form-control text-muted fst-italic">
                                     <option value="">All Users</option>
                                     {% for user in users %}
                                         <option value="{{ user.id }}" {% if selected_user == user.id %}selected{% endif %}>
@@ -44,7 +44,7 @@
                         <!-- Filter by Year -->
                         <div class="form-group">
                             <label for="year">Filter by Year:</label>
-                            <select name="year" id="year" class="form-control text-muted">
+                            <select name="year" id="year" class="form-control text-muted fst-italic">
                                 <option value="">All Years</option>
                                     {% for year in years %}
                                         <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>
@@ -57,7 +57,7 @@
                         <!-- Filter by Month -->
                         <div class="form-group">
                             <label for="month">Filter by Month:</label>
-                            <select name="month" id="month" class="form-control text-muted">
+                            <select name="month" id="month" class="form-control text-muted fst-italic">
                                 <option value="">All Months</option>
                                 {% for month in months %}
                                     <option value="{{ month.0 }}" {% if selected_month == month.0 %}selected{% endif %}>
@@ -70,7 +70,7 @@
                         <!-- Filter by Workday Type -->
                         <div class="form-group">
                             <label for="workday_type">Filter by Workday Type:</label>
-                            <select name="workday_type" id="workday_type" class="form-control text-muted">
+                            <select name="workday_type" id="workday_type" class="form-control text-muted fst-italic">
                                 <option value="">All Types</option>
                                 {% for type in workday_types %}
                                     <option value="{{ type.0 }}" {% if selected_type == type.0 %}selected{% endif %}>
@@ -102,7 +102,7 @@
                                         (for {{ selected_user_username }}) 
                                     {% else %}
                                         <!-- Display total Annual Leave for all users -->
-                                        (All Users)
+                                        (For all Users)
                                     {% endif %}
                                 {% else %}
                                     <!-- Display logged-in user's Annual Leave hours -->
@@ -123,7 +123,7 @@
                                         (for {{ selected_user_username }}) 
                                     {% else %}
                                         <!-- Display total Annual Leave for all users -->
-                                        (All Users)
+                                        (for all Users)
                                     {% endif %}
                                 {% else %}
                                     <!-- Display logged-in user's Annual Leave hours -->
@@ -144,7 +144,7 @@
                                         (for {{ selected_user_username }}) 
                                     {% else %}
                                         <!-- Display total Annual Leave for all users -->
-                                        (All Users)
+                                        (For all Users)
                                     {% endif %}
                                 {% else %}
                                     <!-- Display logged-in user's Annual Leave hours -->
