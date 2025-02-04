@@ -62,7 +62,7 @@ def create_record(request):
         form = WorkdayForm(request.POST, user=request.user)
         if form.is_valid():
             form.save()
-            return redirect('home')  # Redirect to the home page or another view
+            return redirect('home')  
     else:
         form = WorkdayForm(user=request.user)
     
