@@ -1,7 +1,7 @@
 '''models.py for wttapp app'''
 
 from django.db import models
-from datetime import datetime, date
+from datetime import datetime, date, time
 from django.contrib.auth.models import User
 
 
@@ -64,20 +64,21 @@ class Workday(models.Model):
 
     
     #to validate that time_in and time_out are provided only when required.
-    def clean(self):
-        if self.workday_type in ['Sick Leave', 'Bank Holiday']:
-            if self.time_in or self.time_out:
-                raise ValueError(
-                    f"Time In and Time Out should not be provided for {self.get_workday_type_display()}."
-                )
-        elif self.workday_type == 'Work':
-            if not self.time_in or not self.time_out:
-                raise ValueError("Time In and Time Out are required for Workdays.")
+    # def clean(self):
+    #     if self.workday_type in ['Sick Leave', 'Bank Holiday']:
+    #         if self.time_in or self.time_out:
+    #             raise ValueError(
+    #                 f"Time In and Time Out should not be provided for {self.get_workday_type_display()}."
+    #             )
+    #     elif self.workday_type == 'Work':
+    #         if not self.time_in or not self.time_out:
+    #             raise ValueError("Time In and Time Out are required for Workdays.")
 
     def save(self, *args, **kwargs):
-        """Custom save method to enforce time_in and time_out constraints and populate the name field."""
-        # Fetch the UserProfile associated with the user
-        # user_profile = self.user.user_profile
+        # Auto-populate time_in and time_out for specific workday types
+        if self.workday_type in ["Sick Leave", "Bank Holiday"]:
+            self.time_in = time(9, 0)  # 9:00 AM
+            self.time_out = time(17, 0)  # 5:00 PM
         
         # Combine first_name and last_name from the User model
         self.name = f"{self.user.first_name} {self.user.last_name}"

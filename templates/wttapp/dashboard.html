@@ -130,7 +130,7 @@
                                     {{ selected_user_username }}
                                 {% endif %}
                             </p>
-                            <p class="card-text display-4">{{ total_hours|floatformat:2 }}</p>
+                            <p class="card-text display-4">{{ total_work_hours|floatformat:2 }}</p>
                         </div>
                     </div>
                 </div>
@@ -154,14 +154,14 @@
                             <p class="card-text display-4">
                                 {% if user_profile.position == 'Manager' or user_profile.position == 'System Admin' %}
                                     {% if selected_user %}
-                                        {{ annual_leave_hours }} hours
+                                        {{ total_annual_leave_hours }} hours
                                     {% else %}
                                         <!-- Display total Annual Leave for all users -->
-                                        {{ annual_leave_hours }} hours
+                                        {{ total_annual_leave_hours }} hours
                                     {% endif %}
                                 {% else %}
                                     <!-- Display logged-in user's Annual Leave hours -->
-                                    {{ annual_leave_hours }} hours
+                                    {{ total_annual_leave_hours }} hours
                                 {% endif %}
                                 
                             </p>

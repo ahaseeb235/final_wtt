@@ -28,5 +28,24 @@
         </div>
     </div>
 
+    <script>
+        function autoFillTime() {
+            var workdayType = document.getElementById("id_workday_type").value;
+            var timeInField = document.getElementById("id_time_in");
+            var timeOutField = document.getElementById("id_time_out");
+    
+            if (workdayType === "Sick Leave" || workdayType === "Bank Holiday") {
+                timeInField.value = "09:00";  // Set to 9:00 AM
+                timeOutField.value = "17:00"; // Set to 5:00 PM
+            } else {
+                timeInField.value = "";
+                timeOutField.value = "";
+            }
+        }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("id_workday_type").addEventListener("change", autoFillTime);
+        });
+    </script>
 
 {% endblock %}  

@@ -61,8 +61,18 @@ def create_record(request):
     if request.method == 'POST':
         form = WorkdayForm(request.POST, user=request.user)
         if form.is_valid():
-            form.save()
-            return redirect('home')  
+            workday = form.save(commit=False)  # Don't save to DB yet
+            
+            # Set time_in and time_out based on workday_type
+            if workday.workday_type == "Sick Leave":
+                workday.time_in = time(9, 0)  # 9:00 AM
+                workday.time_out = time(17, 0)  # 5:00 PM
+            elif workday.workday_type == "Bank Holiday":
+                workday.time_in = time(9, 0)  # 9:00 AM
+                workday.time_out = time(17, 0)  # 5:00 PM
+            
+            workday.save()  # Now save the record
+            return redirect('home')  # Redirect to the home page
     else:
         form = WorkdayForm(user=request.user)
     
@@ -79,7 +89,17 @@ def edit_workday(request, pk):
     if request.method == 'POST':
         form = WorkdayForm(request.POST, instance=workday, user=request.user)
         if form.is_valid():
-            form.save()
+            workday = form.save(commit=False)
+
+            # Set time_in and time_out based on workday_type
+            if workday.workday_type == "Sick Leave":
+                workday.time_in = time(9, 0)  # 9:00 AM
+                workday.time_out = time(17, 0)  # 5:00 PM
+            elif workday.workday_type == "Bank Holiday":
+                workday.time_in = time(9, 0)  # 9:00 AM
+                workday.time_out = time(17, 0)  # 5:00 PM
+            
+            workday.save()
             return redirect('home')
     else:
         form = WorkdayForm(instance=workday, user=request.user)
@@ -155,19 +175,20 @@ def dashboard(request):
     # Calculate totals for the selected filters
     total_entries = workdays.count()
     
-    # Calculate total hours dynamically
-    total_hours = timedelta()
-    for workday in workdays:
+    # Calculate total work hours (only for workday_type = "Work")
+    work_hours = timedelta()
+    work_workdays = workdays.filter(workday_type='Work')  # Filter by workday_type = "Work"
+    for workday in work_workdays:
         # Combine date with time_in and time_out to create datetime objects
         datetime_in = datetime.combine(workday.date, workday.time_in)
         datetime_out = datetime.combine(workday.date, workday.time_out)
         
         # Calculate duration
         duration = datetime_out - datetime_in
-        total_hours += duration
+        work_hours += duration
     
-    # Convert total_hours to hours
-    total_hours = total_hours.total_seconds() / 3600  # Convert timedelta to hours
+    # Convert work_hours to hours
+    total_work_hours = work_hours.total_seconds() / 3600  # Convert timedelta to hours
     
     # Calculate workday type counts
     workday_type_counts = {
@@ -177,25 +198,10 @@ def dashboard(request):
         'Bank_Holiday': workdays.filter(workday_type='Bank Holiday').count(),
     }
     
-    # Calculate total Annual Leave hours for the current year
+    # Calculate total Annual Leave hours (only for workday_type = "Annual Leave")
     annual_leave_hours = timedelta()
-    if user_profile.position in ['Manager', 'System Admin']:
-        # For Managers and System Admins, calculate Annual Leave for all users (or selected user)
-        if selected_user:
-            annual_workdays = workdays.filter(workday_type='Annual Leave')
-        else:
-            annual_workdays = Workday.objects.filter(
-                workday_type='Annual Leave',
-                date__year=current_year
-            ).exclude(time_in__isnull=True).exclude(time_out__isnull=True)
-    else:
-        # For Staff, calculate Annual Leave for the logged-in user
-        annual_workdays = workdays.filter(
-            workday_type='Annual Leave',
-            user=request.user
-        )
-    
-    for workday in annual_workdays:
+    annual_leave_workdays = workdays.filter(workday_type='Annual Leave')  # Filter by workday_type = "Annual Leave"
+    for workday in annual_leave_workdays:
         # Combine date with time_in and time_out to create datetime objects
         datetime_in = datetime.combine(workday.date, workday.time_in)
         datetime_out = datetime.combine(workday.date, workday.time_out)
@@ -205,7 +211,7 @@ def dashboard(request):
         annual_leave_hours += duration
     
     # Convert annual_leave_hours to hours
-    annual_leave_hours = annual_leave_hours.total_seconds() / 3600  # Convert timedelta to hours
+    total_annual_leave_hours = annual_leave_hours.total_seconds() / 3600  # Convert timedelta to hours
     
     # Calculate monthly hours for the current year
     monthly_hours = {month: 0 for month in [
@@ -235,7 +241,8 @@ def dashboard(request):
         'selected_type': selected_type,
         'selected_year': selected_year,
         'total_entries': total_entries,
-        'total_hours': total_hours,
+        'total_work_hours': total_work_hours,  # Pass total work hours
+        'total_annual_leave_hours': total_annual_leave_hours,  # Pass total annual leave hours
         'workday_type_counts': workday_type_counts,
         'monthly_hours': monthly_hours,
         'current_month': current_month,
@@ -246,6 +253,5 @@ def dashboard(request):
         'users': users,  # Pass users for the filter dropdown
         'selected_user': int(selected_user) if selected_user else None,
         'selected_user_username': selected_user_username,  # Pass the selected user's username
-        'annual_leave_hours': annual_leave_hours,  # Pass Annual Leave hours to the template
     }
     return render(request, 'wttapp/dashboard.html', context)
