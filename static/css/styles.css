@@ -38,6 +38,12 @@ body {
     margin-right: 20px;
 }
 
+.profile-image {
+    border-radius: 50%;
+    border:#b4b4b4 2px solid;
+    
+}
+
 /* form layout */
 .form-name {
     font-size: 2rem;
@@ -109,6 +115,7 @@ footer-container {
 .img-fluid {
     max-width: 100%;
     height: auto;
+    border: #1e1e1e 2px solid;
 }
 
 .btn-primary {
@@ -119,4 +126,9 @@ footer-container {
 .btn-primary:hover {
     background-color: #0056b3;
     border-color: #0056b3;
+}
+
+/* edit user page */
+.form-group {
+    padding-bottom: 10px;
 }

@@ -10,10 +10,10 @@
             <div class="card">
                 <div class="card-body text-center">
                     {% if user_profile.profile_picture %}
-                    <img src="{{ user_profile.profile_picture.url }}" alt="Profile Picture"
+                    <img class="profile-image" src="{{ user_profile.profile_picture.url }}" alt="Profile Picture"
                         class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                     {% else %}
-                    <img src="/media/profile_pictures/default.png" alt="Default Profile Picture"
+                    <img class="profile-image" src="/media/profile_pictures/default.png" alt="Default Profile Picture"
                         class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                     {% endif %}
                     <h4>{{ user_profile.user.username }}</h4>
