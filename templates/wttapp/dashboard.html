@@ -52,6 +52,7 @@
                                         </option>
                                     {% endfor %}
                             </select>
+                            <small class="form-text text-muted">Default to Current Year</small>
                         </div>
 
                         <!-- Filter by Month -->
@@ -65,6 +66,7 @@
                                     </option>
                                 {% endfor %}
                             </select>
+                            <small class="form-text text-muted">Default to Current Month</small>
                         </div>
 
                         <!-- Filter by Workday Type -->
@@ -221,6 +223,7 @@
 
 
             <!-- Graphs -->
+             <!-- Workday Type Distribution -->
             <div class="row mb-4">
                 <div class="col-md-6 d-flex align-items-stretch">
                     <div class="card w-100">
@@ -232,15 +235,16 @@
                         </div>
                     </div>
                 </div>
+                <!-- workday types per month -->
                 <div class="col-md-6 d-flex align-items-stretch">
                     <div class="card w-100">
                         <div class="card-header">
                             <h5>
                                 {% if selected_type %}
-                                        {{ selected_type}} per Month
+                                        {{ selected_type}} per Month for {{ selected_year }}
                                     {% else %}
                                         <!-- Display total sick Leave for all users -->
-                                        All Workday Types per Month
+                                        All Workday Types per Month for {{ selected_year }}
                                     {% endif %}
                             </h5>
                         </div>
