@@ -243,9 +243,20 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Workday Entries Table -->
-            <h3>Workday Entries for <span class="badge bg-success">{{ selected_month }}&nbsp;{{ selected_year }}</span></h3>
+           <hr>
+          <!-- Workday Entries Table -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <h4>Workday Entries for - <span class="text-success-emphasis">{{ selected_month }}&nbsp;{{ selected_year }}</span></h4>
+                     <br>
+                    <a href="{% url 'export_workdays_csv' %}?user={{ selected_user|default:'' }}&year={{ selected_year|default:'' }}&month={{ selected_month|default:'' }}&workday_type={{ selected_type|default:'' }}" 
+                        class="btn btn-success btn-sm">
+                        Export to CSV &nbsp; <i class="fa fa-download" aria-hidden="true"></i>
+                    </a>
+                    <p class="text-muted fst-italic">Click on the button to export the table to csv.</p>
+                </div>
+            </div>
+            
             <table class="table table-hover table-striped table-bordered text-center">
                 <thead class="table-light">
                     <tr>
@@ -282,13 +293,18 @@
                     {% endif %}
                 </tbody>
             </table>
+            
         </div>
     </div>
 </div>
 
+
 <br><br><br>
 
 <script>
+// Export to CSV
+
+
 // Workday Types Distribution Chart
 const workdayTypeChartElement = document.getElementById("workdayTypeChart");
 if (workdayTypeChartElement) {
@@ -300,10 +316,10 @@ if (workdayTypeChartElement) {
             datasets: [{
                 label: "Workday Types",
                 data: [
-                    {{ workday_type_counts.Work|default:0 }},
-                    {{ workday_type_counts.Sick_Leave|default:0 }},
-                    {{ workday_type_counts.Annual_Leave|default:0 }},
-                    {{ workday_type_counts.Bank_Holiday|default:0 }}
+                    {{ workday_type_counts.Work|default:"0" }},
+                    {{ workday_type_counts.Sick_Leave|default:"0" }},
+                    {{ workday_type_counts.Annual_Leave|default:"0" }},
+                    {{ workday_type_counts.Bank_Holiday|default:"0" }}
                 ],
                 backgroundColor: [
                     "rgba(54, 162, 235, 0.8)",

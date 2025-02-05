@@ -23,8 +23,6 @@ flatpickr("input[name='time_out']", {
 
 
 
-
-
 // Hours Worked Chart
 // document.addEventListener('DOMContentLoaded', function () {
 //     const ctx = document.getElementById('chart-container').getContext('2d');

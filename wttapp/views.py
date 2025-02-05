@@ -9,10 +9,9 @@ from .forms import WorkdayForm
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import datetime,timedelta, time
-from django.http import JsonResponse
-from django.views import View
-from django.db.models import Q, Sum, Count, F, ExpressionWrapper, fields
-from django.db.models.functions import ExtractYear
+import csv
+import calendar
+from django.http import HttpResponse
 
 
 
@@ -273,3 +272,69 @@ def dashboard(request):
         'selected_user_username': selected_user_username,  # Pass the selected user's username
     }
     return render(request, 'wttapp/dashboard.html', context)
+
+# for csv export
+@login_required
+def export_workdays_csv(request):
+    # Create CSV response
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="filtered_workday_entries.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Name', 'Date', 'Type', 'Month', 'Year', 'Time In', 'Time Out', 'Total Hours'])
+
+    # Retrieve user profile
+    user_profile = request.user.user_profile  # Assuming `UserProfile` has `position`
+    
+    # Retrieve filters from GET request
+    selected_user = request.GET.get('user')
+    selected_year = request.GET.get('year')
+    selected_month = request.GET.get('month')
+    selected_type = request.GET.get('workday_type')
+
+    # Base queryset
+    if user_profile.position in ['Manager', 'System Admin']:
+        workdays = Workday.objects.all()
+    else:
+        workdays = Workday.objects.filter(user=request.user)  # Staff can only see their own data
+
+    # Apply filters
+    if selected_user and selected_user.isdigit() and user_profile.position in ['Manager', 'System Admin']:
+        workdays = workdays.filter(user_id=int(selected_user))  # Only Managers/Admins can filter by user
+
+    if selected_year and selected_year.isdigit():
+        workdays = workdays.filter(date__year=int(selected_year))
+
+    if selected_month:
+        try:
+            selected_month_number = list(calendar.month_name).index(selected_month)
+            workdays = workdays.filter(date__month=selected_month_number)
+        except ValueError:
+            pass  # Ignore invalid months
+
+    if selected_type and selected_type != "None":
+        workdays = workdays.filter(workday_type=selected_type)
+
+    # Debugging print (Check filtered results)
+    print(f"Exporting {workdays.count()} records after filtering.")
+
+    # If no data is found, add a message to the CSV
+    if not workdays.exists():
+        writer.writerow(["No matching records found"])
+        return response
+
+    # Write filtered records to CSV
+    for record in workdays:
+        writer.writerow([
+            record.id,
+            record.user.username,
+            record.date,
+            record.get_workday_type_display(),
+            record.date.strftime('%B'),
+            record.date.year,
+            record.time_in if record.time_in else "N/A",
+            record.time_out if record.time_out else "N/A",
+            round(record.total_hours, 2) if record.total_hours else "0.00"
+        ])
+
+    return response
