@@ -174,7 +174,7 @@ def dashboard(request):
     
     # Calculate totals for the selected filters
     total_entries = workdays.count()
-    
+        
     # Calculate total work hours (only for workday_type = "Work")
     work_hours = timedelta()
     work_workdays = workdays.filter(workday_type='Work')  # Filter by workday_type = "Work"
@@ -190,6 +190,7 @@ def dashboard(request):
     # Convert work_hours to hours
     total_work_hours = work_hours.total_seconds() / 3600  # Convert timedelta to hours
     
+        
     # Calculate workday type counts
     workday_type_counts = {
         'Work': workdays.filter(workday_type='Work').count(),
@@ -212,6 +213,22 @@ def dashboard(request):
     
     # Convert annual_leave_hours to hours
     total_annual_leave_hours = annual_leave_hours.total_seconds() / 3600  # Convert timedelta to hours
+    
+    # Calculate total Sick Leave hours (only for workday_type = "Sick Leave")
+    sick_leave_hours = timedelta()
+    sick_leave_workdays = workdays.filter(workday_type='Sick Leave')  # Filter by workday_type = "Sick Leave"
+    for workday in sick_leave_workdays:
+        # Combine date with time_in and time_out to create datetime objects
+        datetime_in = datetime.combine(workday.date, workday.time_in)
+        datetime_out = datetime.combine(workday.date, workday.time_out)
+        
+        # Calculate duration
+        duration = datetime_out - datetime_in
+        sick_leave_hours += duration
+    
+    # Convert sick_leave_hours to hours
+    total_sick_leave_hours = sick_leave_hours.total_seconds() / 3600  # Convert timedelta to hours
+    
     
     # Calculate monthly hours for the current year
     monthly_hours = {month: 0 for month in [
@@ -243,6 +260,7 @@ def dashboard(request):
         'total_entries': total_entries,
         'total_work_hours': total_work_hours,  # Pass total work hours
         'total_annual_leave_hours': total_annual_leave_hours,  # Pass total annual leave hours
+        'total_sick_leave_hours': total_sick_leave_hours,  # Pass total sick leave hours
         'workday_type_counts': workday_type_counts,
         'monthly_hours': monthly_hours,
         'current_month': current_month,

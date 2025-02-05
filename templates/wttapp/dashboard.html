@@ -89,10 +89,14 @@
         </div>
 
         <!-- Main Content Area -->
+        
         <div class="col-md-9 col-12">
+            <div class="conainer">
+                <p class="fst-italic text-muted">You are viewing data for <span class="badge bg-success">{{ selected_month }}&nbsp;{{ selected_year }}</span></p>
+            </div>
             <!-- Number Widgets -->
             <div class="row mb-4">
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="card text-white bg-primary">
                         <div class="card-body">
                             <h5 class="card-title">Total Entries</h5>
@@ -113,8 +117,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card text-white bg-success">
+                <div class="col-md-6">
+                    <div class="card text-white bg-info">
                         <div class="card-body">
                             <h5 class="card-title">Total Work Hours</h5>
                             <p class="fst-italic">
@@ -135,9 +139,9 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card text-white bg-warning">
+                    <div class="card text-white bg-success">
                         <div class="card-body">
-                            <h5 class="card-title">Total Annual Leave Taken ({{ current_year }})</h5>
+                            <h5 class="card-title">Total Annual Leave Taken ({{ selected_year }})</h5>
                             <p class="fst-italic">
                                 {% if user_profile.position == 'Manager' or user_profile.position == 'System Admin' %}
                                     {% if selected_user %}
@@ -154,26 +158,72 @@
                             <p class="card-text display-4">
                                 {% if user_profile.position == 'Manager' or user_profile.position == 'System Admin' %}
                                     {% if selected_user %}
-                                        {{ total_annual_leave_hours }} hours
+                                        {{ total_annual_leave_hours|floatformat:2 }} 
                                     {% else %}
                                         <!-- Display total Annual Leave for all users -->
-                                        {{ total_annual_leave_hours }} hours
+                                        {{ total_annual_leave_hours|floatformat:2 }} 
                                     {% endif %}
                                 {% else %}
                                     <!-- Display logged-in user's Annual Leave hours -->
-                                    {{ total_annual_leave_hours }} hours
+                                    {{ total_annual_leave_hours|floatformat:2 }} 
                                 {% endif %}
                                 
                             </p>
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="card text-white bg-danger">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Sick Leave Taken ({{ selected_year }})</h5>
+                            <p class="fst-italic">
+                                {% if user_profile.position == 'Manager' or user_profile.position == 'System Admin' %}
+                                    {% if selected_user %}
+                                        (for {{ selected_user_username }}) 
+                                    {% else %}
+                                        <!-- Display total sick Leave for all users -->
+                                        (For all Users)
+                                    {% endif %}
+                                {% else %}
+                                    <!-- Display logged-in user's sick Leave hours -->
+                                    {{ selected_user_username }}
+                                {% endif %}
+                            </p>
+                            <p class="card-text display-4">
+                                {% if user_profile.position == 'Manager' or user_profile.position == 'System Admin' %}
+                                    {% if selected_user %}
+                                        {{ total_sick_leave_hours|floatformat:2 }}
+                                    {% else %}
+                                        <!-- Display total sick Leave for all users -->
+                                        {{ total_sick_leave_hours|floatformat:2 }} 
+                                    {% endif %}
+                                {% else %}
+                                    <!-- Display logged-in user's sick Leave hours -->
+                                    {{ total_sick_leave_hours|floatformat:2 }} 
+                                {% endif %}
+                                
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
+        
+
+            <!--  -->
+            <div class="row mb-4">
+                
+            </div>
+            
+
+
+
 
             <!-- Graphs -->
             <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="card">
+                <div class="col-md-6 d-flex align-items-stretch">
+                    <div class="card w-100">
                         <div class="card-header">
                             <h5>Workday Types Distribution</h5>
                         </div>
@@ -182,10 +232,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card">
+                <div class="col-md-6 d-flex align-items-stretch">
+                    <div class="card w-100">
                         <div class="card-header">
-                            <h5>Hours Worked in {{ previous_month }} vs {{ current_month }}</h5>
+                            <h5>Hours Worked by Month</h5>
                         </div>
                         <div class="card-body">
                             <canvas id="monthlyHoursChart"></canvas>
@@ -195,7 +245,7 @@
             </div>
 
             <!-- Workday Entries Table -->
-            <h3>Your Workday Entries</h3>
+            <h3>Workday Entries for <span class="badge bg-success">{{ selected_month }}&nbsp;{{ selected_year }}</span></h3>
             <table class="table table-hover table-striped table-bordered text-center">
                 <thead class="table-light">
                     <tr>
@@ -269,11 +319,8 @@ if (workdayTypeChartElement) {
             plugins: {
                 legend: {
                     position: "top",
-                },
-                title: {
-                    display: true,
-                    text: "Workday Types Distribution"
                 }
+                
             }
         }
     });
@@ -311,14 +358,12 @@ if (monthlyHoursChartElement) {
             }]
         },
         options: {
+            indexAxis: 'y',
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: "top",
-                },
-                title: {
-                    display: true,
-                    text: "Monthly Hours"
                 }
             }
         }
