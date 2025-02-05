@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('noticeboard/', include('noticeboard.urls')),
     path('wttapp', include('wttapp.urls')),
-    path('account', include('UserLogin.urls')),
+    path('accounts/', include('UserLogin.urls')),
     path('', views.index, name='index'),
     
 ]
