@@ -235,7 +235,14 @@
                 <div class="col-md-6 d-flex align-items-stretch">
                     <div class="card w-100">
                         <div class="card-header">
-                            <h5>Hours Worked by Month</h5>
+                            <h5>
+                                {% if selected_type %}
+                                        {{ selected_type}} per Month
+                                    {% else %}
+                                        <!-- Display total sick Leave for all users -->
+                                        All Workday Types per Month
+                                    {% endif %}
+                            </h5>
                         </div>
                         <div class="card-body">
                             <canvas id="monthlyHoursChart"></canvas>
@@ -316,7 +323,7 @@ if (workdayTypeChartElement) {
             datasets: [{
                 label: "Workday Types",
                 data: [
-                    {{ workday_type_counts.Work|default:"0" }},
+                    {{ workday_type_counts.Work|default:'0' }},
                     {{ workday_type_counts.Sick_Leave|default:"0" }},
                     {{ workday_type_counts.Annual_Leave|default:"0" }},
                     {{ workday_type_counts.Bank_Holiday|default:"0" }}
