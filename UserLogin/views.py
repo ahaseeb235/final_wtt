@@ -62,6 +62,7 @@ def edit_profile(request):
             profile_form.save()
             messages.success(request, 'Profile updated successfully!')
             return redirect('profile')
+       
 
     return render(request, 'UserLogin/edit_profile.html', {
         'profile_form': profile_form,

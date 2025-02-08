@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Noticeboard</h3>
+<a class="btn btn-primary btn-sm mb-5" href="{% url 'noticeboard:post_create' %}" >Create New Post <i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+<p class="text-muted">Total Posts: {{ posts|length }}</p>
+{% for post in posts %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p class="card-text">{{ post.post|truncatechars:200 }}</p>
+        <a href="{% url 'noticeboard:post_detail' pk=post.pk %}" class="btn btn-sm btn-info">Read More</a>
+        
+        {% if post.user == request.user or request.user.user_profile.position == "Manager" or request.user.user_profile.position == "System Admin" %}
+        <a href="{% url 'noticeboard:post_edit' pk=post.pk %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'noticeboard:post_delete' pk=post.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        {% endif %}
+    </div>
+    <div class="card-footer text-muted fst-italic">
+        Posted by {{ post.user.username }} on {{ post.date_posted }}
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

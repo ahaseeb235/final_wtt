@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>{{ post.title }}</h3>
+<p>{{ post.post }}</p>
+<hr class="mt-5">
+<p class="fst-italic">Posted by {{ post.user.username }} on {{ post.date_posted }}</p>
+{% if post.user == request.user %}
+<!-- Only Post owners can edit and delete post record -->
+<a href="{% url 'noticeboard:post_edit' pk=post.pk %}" class="btn btn-sm btn-warning">Edit</a>
+<a href="{% url 'noticeboard:post_delete' pk=post.pk %}" class="btn btn-sm btn-danger">Delete</a>
+{% endif %}
+<a href="{% url 'noticeboard:post_list' %}" class="btn btn-sm btn-secondary">Back to List</a>
+{% endblock %}
