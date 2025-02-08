@@ -10,6 +10,7 @@ from .forms import WorkdayForm
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import datetime,timedelta, time
+from django.views.generic import DetailView, DeleteView
 import csv
 import calendar
 from django.http import HttpResponse
@@ -117,6 +118,27 @@ def edit_workday(request, pk):
     
     return render(request, 'wttapp/edit_workday.html', {'form': form})
 
+# View workday detail
+class WorkdayDetailView(LoginRequiredMixin, DetailView):
+    model = Workday
+    template_name = 'wttapp/workday_detail.html'  # Template for the view page
+    context_object_name = 'workday'
+    
+
+# Delete workday
+class WorkdayDeleteView(LoginRequiredMixin, DeleteView):
+    model = Workday
+    template_name = 'wttapp/workday_confirm_delete.html'  # Template for the delete confirmation page
+    success_url = reverse_lazy('home')  # Redirect to home after deletion
+
+    def dispatch(self, request, *args, **kwargs):
+        # Check if the user is a Manager or System Admin
+        workday = self.get_object()
+        user_profile = request.user.user_profile
+        if user_profile.position not in ['Manager', 'System Admin']:
+            messages.error(request, 'You do not have permission to delete this record.')
+            return redirect('home')
+        return super().dispatch(request, *args, **kwargs)
 
 @login_required
 def dashboard(request):

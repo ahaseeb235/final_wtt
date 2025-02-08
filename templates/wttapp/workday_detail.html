@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} wttApp - Workday Details {% endblock %}
+
+{% block content %}
+<div class="container mt-2 mb-2">
+    <div class="row">
+        <h4>Workday Details</h4>
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title text-info">{{ workday.user.user_profile.firstname }} {{ workday.user.user_profile.lastname }}</h4>
+                    <p class="card-text">
+                        <strong>Date:</strong> {{ workday.date }}<br>
+                        <strong>Type:</strong> {{ workday.get_workday_type_display }}<br>
+                        <strong>Month:</strong> {{ workday.get_month_display }}<br>
+                        <strong>Time In:</strong> {{ workday.time_in }}<br>
+                        <strong>Time Out:</strong> {{ workday.time_out }}<br>
+                        <strong>Total Hours:</strong> {{ workday.total_hours|floatformat:2 }}<br>
+                    </p>
+                    <a href="{% url 'home' %}" class="btn btn-sm btn-secondary">Back to Home</a>
+                     
+                    <!-- Edit Button -->
+                     {% if workday.user == request.user or request.user.user_profile.position in 'Manager System Admin' %}
+                     <a href="{% url 'edit_workday' workday.id %}" class="btn btn-sm btn-warning">Edit &nbsp; <i class="fa fa-pencil" aria-hidden="true"></i></a>
+                     {% endif %}
+
+                      <!-- Delete Button -->
+                    {% if request.user.user_profile.position in 'Manager System Admin' %}
+                    <a href="{% url 'workday_delete' workday.id %}" class="btn btn-sm btn-danger">Delete &nbsp; <i class="fa fa-trash" aria-hidden="true"></i></a>
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -38,7 +38,7 @@
             <th scope="col">Time In</th>
             <th scope="col">Time Out</th>
             <th scope="col">Total Hours</th>
-            <th scope="col">View</th>
+            <th scope="col">View / Edit</th>
         </tr>
     </thead>
     <tbody>
@@ -54,7 +54,11 @@
             <td>{{ record.time_out }}</td>
             <td>{{ record.total_hours|floatformat:2 }}</td>
             <td>
+                <a href="{% url 'workday_detail' record.id %}" class="btn btn-info btn-sm">View &nbsp; <i class="fa fa-eye" aria-hidden="true"></i></a>
                 <a href="{% url 'edit_workday' record.id %}" class="btn btn-info btn-sm">Edit &nbsp; <i class="fa fa-pencil" aria-hidden="true"></i></a>
+                
+            </td>
+            
 
 
         </tr>
