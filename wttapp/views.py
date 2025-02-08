@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 from wttapp.models import Workday
 from UserLogin.models import UserProfile
+from noticeboard.models import Post
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -26,7 +27,7 @@ class WorkdayListView(LoginRequiredMixin, ListView):
         
         # Check if the user is an active System Admin or Manager
         if user_profile.status == 'Active' and user_profile.position in ['System Admin', 'Manager']:
-            return Workday.objects.all()  # Show all records
+            return Workday.objects.all()  # Show all records for admins and managers
         else:
             return Workday.objects.filter(user=self.request.user)  # Show only the user's records
 
@@ -34,11 +35,11 @@ class WorkdayListView(LoginRequiredMixin, ListView):
 def home(request):
     user_profile = UserProfile.objects.get(user=request.user)
     
-    # Check if the user is an active System Admin or Manager
+    # To check if the user is an active System Admin or Manager
     if user_profile.status == 'Active' and user_profile.position in ['System Admin', 'Manager']:
-        records_list = Workday.objects.select_related('user__user_profile').all().order_by('-date')  # Show all records
+        records_list = Workday.objects.select_related('user__user_profile').all().order_by('-date')  # to show all records
     else:
-        records_list = Workday.objects.select_related('user__user_profile').filter(user=request.user).order_by('-date')  # Show only the user's records
+        records_list = Workday.objects.select_related('user__user_profile').filter(user=request.user).order_by('-date')  # to show only the user's records
 
     # Pagination logic
     paginator = Paginator(records_list, 5)  # Show 5 records per page
@@ -52,8 +53,19 @@ def home(request):
     except EmptyPage:
         # If page is out of range (e.g., 9999), deliver the last page
         records = paginator.page(paginator.num_pages)
+        
+    # to fetch the latest three posts from the noticeboard app
+    latest_posts = Post.objects.all().order_by('-date_posted')[:3]
 
-    return render(request, 'wttapp/home.html', {'records': records, 'user_profile': user_profile})
+    # Pass the records, user_profile, and latest_posts to the template
+    context = {
+        'records': records,
+        'user_profile': user_profile,
+        'latest_posts': latest_posts,  
+    }
+   
+
+    return render(request, 'wttapp/home.html', context)
 
 @login_required
 def create_record(request):

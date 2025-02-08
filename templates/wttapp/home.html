@@ -8,29 +8,22 @@
 {% block content %}
 <h3> Welcome {{user}}! 👋 </h3>
 <hr>
-<br>
-<div class="container"></div>
 <div class="container-fluid">
     <div class="row">
-        <!-- Left Div -->
-        <div class="col-md-6 col-12">
-            
-                <a class="btn btn-primary btn-sm" href="{% url 'create_record' %}">Create new record &nbsp; <i class="fa fa-plus-circle" aria-hidden="true"></i></a>&nbsp;
-                <a class="btn btn-warning btn-sm ml-auto" href="{% url 'dashboard' %}">Dashboard &nbsp; <i class="fa fa-line-chart" aria-hidden="true"></i></a>
-            
+        <div class="col-md-6 col-12 mb-4">
+            <a class="btn btn-primary btn-sm" href="{% url 'create_record' %}">Create new record &nbsp; <i class="fa fa-plus-circle" aria-hidden="true"></i></a>&nbsp;
+            <a class="btn btn-warning btn-sm ml-auto" href="{% url 'dashboard' %}">Dashboard &nbsp; <i class="fa fa-line-chart" aria-hidden="true"></i></a>
         </div>
-
-       
     </div>
 </div>
 
 
-<br><br>
+
 
 {% if user_profile.status == 'Active' and user_profile.position in 'System Admin Manager' %}
-    <h3>All Workday Entries</h3>
+    <h4>All Workday Entries</h4>
 {% else %}
-    <h3>Your Workday Entries</h3>
+    <h4>Your Workday Entries</h4>
 {% endif %}
 
 
@@ -90,27 +83,30 @@
         {% endif %}
     </span>
 </div>
-<br>
+<hr>
 
-<h4>Graphs</h4>
-<div class="container-fluid">
-    <div class="row">
-        <!-- Left Div -->
-        <div class="col-md-6 col-12">
-            <div class="custom-div">
-                <p class="text-muted">This is the left div for graph.</p>
+<!-- Latest Noticeboard Posts -->
+<h4>Latest Noticeboard Posts</h4>
+<div class="row mb-5">
+    {% for post in latest_posts %}
+    <div class="col-md-4 mb-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">{{ post.title }}</h5>
+                <p class="card-text">{{ post.post|truncatechars:100 }}</p>
+                <a href="{% url 'noticeboard:post_detail' pk=post.pk %}" class="btn btn-sm btn-info">Read More</a>
             </div>
-        </div>
-
-        <!-- Right Div -->
-        <div class="col-md-6 col-12">
-            <div class="custom-div">
-                <p class="text-muted">This is the right div for pragh. </p>
+            <div class="card-footer text-muted">
+                Posted by {{ post.user.username }} on {{ post.date_posted }}
             </div>
         </div>
     </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="text-muted">No posts available.</p>
+    </div>
+    {% endfor %}
 </div>
-
 
 
 {% endblock %}

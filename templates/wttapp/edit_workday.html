@@ -4,14 +4,13 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-2 mb-2">
     <div class="row">
-        
+        <h4>Update your Workday record</h4>
 
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h5>Update your Workday record</h5>
                     <form method="post">
                         {% csrf_token %}
                         {{ form|crispy }}
