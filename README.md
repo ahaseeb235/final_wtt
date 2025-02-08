@@ -7,19 +7,25 @@ Git Repo: https://github.com/ahaseeb235/final_wtt.git
 A web application built with Django to track employee working hours
 
 ## Table of Contents
+- [User Stories](#user-stories)
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
 - [Project Structure](#project-structure)
 
 ---
+## User Stories
+- **Three Types of Users based on Position**
+
 
 ## Features
 - **User Management**: 
   - Registration and login system
+  - User password change
+  - User details and profile update with image
   - users can create, view, delete and edit only their own records
-  - admin/superuser can CRUD all.
-  (more functionality could be added)
+  - admin/superuser can CRUD all. Manager can CRUD all. 
+  
 - **Time Tracking**:
   - Log daily working hours with time-in and time-out.
   - calculation of total work hours

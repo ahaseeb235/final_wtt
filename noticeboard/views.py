@@ -4,11 +4,31 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Post
 from .forms import PostForm
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 @login_required
 def post_list(request):
-    posts = Post.objects.all().order_by('-date_posted')
-    return render(request, 'noticeboard/post_list.html', {'posts': posts})
+    all_posts = Post.objects.all().order_by('-date_posted')
+
+    # Pagination logic
+    paginator = Paginator(all_posts, 3)  # Show 3 posts per page
+    page = request.GET.get('page', 1)  # Get the current page number from the request
+
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver the first page
+        posts = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g., 9999), deliver the last page
+        posts = paginator.page(paginator.num_pages)
+
+    # Pass the posts to the template
+    context = {
+        'posts': posts,
+    }
+    return render(request, 'noticeboard/post_list.html', context)
 
 @login_required
 def post_create(request):

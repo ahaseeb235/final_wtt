@@ -2,8 +2,11 @@
 
 {% block content %}
 <h3>Noticeboard</h3>
-<a class="btn btn-primary btn-sm mb-5" href="{% url 'noticeboard:post_create' %}" >Create New Post <i class="fa fa-plus-circle" aria-hidden="true"></i></a>
-<p class="text-muted">Total Posts: {{ posts|length }}</p>
+<a class="btn btn-primary btn-sm mb-2" href="{% url 'noticeboard:post_create' %}">
+    Create New Post <i class="fa fa-plus-circle" aria-hidden="true"></i>
+</a>
+<p class="text-muted">Total Posts: {{ posts.paginator.count }}</p>
+
 {% for post in posts %}
 <div class="card mb-3">
     <div class="card-body">
@@ -21,4 +24,23 @@
     </div>
 </div>
 {% endfor %}
+
+<!-- Pagination Controls -->
+<div class="pagination">
+    <span class="step-links">
+        {% if posts.has_previous %}
+        <a class="btn btn-success btn-sm" href="?page=1">&laquo; First</a>
+        <a class="btn btn-success btn-sm" href="?page={{ posts.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ posts.number }} of {{ posts.paginator.num_pages }}
+        </span>
+
+        {% if posts.has_next %}
+        <a class="btn btn-success btn-sm" href="?page={{ posts.next_page_number }}">Next</a>
+        <a class="btn btn-success btn-sm" href="?page={{ posts.paginator.num_pages }}">Last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
 {% endblock %}
