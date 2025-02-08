@@ -7,6 +7,7 @@ Git Repo: https://github.com/ahaseeb235/final_wtt.git
 A web application built with Django to track employee working hours
 
 ## Table of Contents
+- [Project Background](#project-background)
 - [User Stories](#user-stories)
 - [Features](#features)
 - [Technologies Used](#technologies-used)
@@ -14,8 +15,17 @@ A web application built with Django to track employee working hours
 - [Project Structure](#project-structure)
 
 ---
+## Project Background
+Small-to-medium organisations have budgetary constraints that may prevent them to deploy and train their staff to use more complex and advanced applications such as Hubstaff, Wrike, Clockify, QuickBooks, etc. 
+
+The aim of this endeavour is to provide a simple solution to track employee work hours, sick leave, annual leave, etc, and have it ready to send to payroll department. Target Audience will mainly be adults > 18+ years who are part of a small organisation.
+
+
 ## User Stories
 - **Three Types of Users based on Position**
+  - Staff: General users
+  - Manager: Would have CRUD permissions, such as edit/delete some records
+  - System Admin: Superuser with all CRUD permissions. 
 
 
 ## Features
@@ -31,6 +41,7 @@ A web application built with Django to track employee working hours
   - calculation of total work hours
   - when workday_type is Bank Holiday or Sick Leave or Annual Leave, then time_in/time_out are not required. 
   - Categorize workdays as Work, Sick Leave, Annual Leave, Bank Holiday.
+  
 - **Dashboard**:
   - List view of total hours worked per month and categorized hours (e.g., Sick Leave, Overtime).
   - pagination on dashboard page

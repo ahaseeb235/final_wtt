@@ -29,8 +29,8 @@
 <div class="pagination">
     <span class="step-links">
         {% if posts.has_previous %}
-        <a class="btn btn-success btn-sm" href="?page=1">&laquo; First</a>
-        <a class="btn btn-success btn-sm" href="?page={{ posts.previous_page_number }}">Previous</a>
+        <a class="btn btn-info btn-sm" href="?page=1">&laquo; First</a>
+        <a class="btn btn-info btn-sm" href="?page={{ posts.previous_page_number }}">Previous</a>
         {% endif %}
 
         <span class="current">
@@ -38,8 +38,8 @@
         </span>
 
         {% if posts.has_next %}
-        <a class="btn btn-success btn-sm" href="?page={{ posts.next_page_number }}">Next</a>
-        <a class="btn btn-success btn-sm" href="?page={{ posts.paginator.num_pages }}">Last &raquo;</a>
+        <a class="btn btn-info btn-sm" href="?page={{ posts.next_page_number }}">Next</a>
+        <a class="btn btn-info btn-sm" href="?page={{ posts.paginator.num_pages }}">Last &raquo;</a>
         {% endif %}
     </span>
 </div>
