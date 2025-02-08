@@ -1,8 +1,8 @@
 # Django Final Project: Work Time Tracker App
 
-Render URL: #
+Render URL: https://final-wtt.onrender.com/
 
-Git Repo: #
+Git Repo: https://github.com/ahaseeb235/final_wtt.git
 
 A web application built with Django to track employee working hours
 

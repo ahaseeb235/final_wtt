@@ -162,3 +162,10 @@ MEDIA_ROOT = MEDIA_DIR
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_REDIRECT_URL = 'home'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER') # Login email address, Stored as an environment varaible
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD') # App Password set from gmail, Stored as an environment varaible
