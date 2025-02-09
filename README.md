@@ -119,6 +119,14 @@ I wrote tests.py for th main application [wttapp] to ensure, views, models, form
   - JavaScript for dynamic and interactive elements - Flatpicker.
   - Chart.js for display of charts and graphs on dashboard
 
+## External Resources:
+- Bootstrap: https://getbootstrap.com/docs/5.3/getting-started/introduction/
+- Bootswatch: https://bootswatch.com/
+- Font Awesome: https://fontawesome.com/
+- Flatpickr: https://flatpickr.js.org/
+- Chart.js: https://www.chartjs.org/docs/latest/
+- jQuery: https://api.jquery.com/
+
 ---
 
 ## Installation
