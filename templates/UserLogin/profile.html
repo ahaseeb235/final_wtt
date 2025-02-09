@@ -12,11 +12,11 @@
                 <div class="card-body text-center">
                     <!-- Profile Picture -->
                     {% if user_profile.profile_picture %}
-                    <img src="{{ user_profile.profile_picture.url }}" alt="Profile Picture"
+                    <img class="profile-image" src="{{ user_profile.profile_picture.url }}" alt="Profile Picture"
                         class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                         <p>Image URL: {{ user_profile.profile_picture.url }}</p>
                     {% else %}
-                    <img src="/media/profile_pictures/default.png" alt="Default Profile Picture"
+                    <img src="/media/default.png" alt="Default Profile Picture"
                         class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                     {% endif %}
 

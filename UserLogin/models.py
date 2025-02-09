@@ -48,7 +48,7 @@ class UserProfile(models.Model):
     )
     
      # Profile Picture with default
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures', blank=True, null=True)
 
     
     def __str__(self):
@@ -68,28 +68,33 @@ class UserProfile(models.Model):
         
     def save(self, *args, **kwargs):
         """
-        Override save method:
-        - Delete previous profile picture if a new one is uploaded.
-        - Ensure users can revert to the default profile picture.
+        - Ensures `default.png` is never deleted.
+        - Deletes only **previous user-uploaded profile pictures** when a new one is uploaded.
+        - Allows resetting back to `default.png`.
         """
-        if self.pk:  # If the instance already exists
+        if self.pk:  # Ensure the instance exists in the database
             try:
                 old_profile = UserProfile.objects.get(pk=self.pk)
                 if old_profile.profile_picture and self.profile_picture != old_profile.profile_picture:
-                    if old_profile.profile_picture.name != "profile_pictures/default.png":
-                        old_profile.profile_picture.delete(save=False)  # Delete the old image file
+                    # **Delete only if it's NOT `default.png`**
+                    if old_profile.profile_picture.name != "media/default.png":
+                        if os.path.isfile(old_profile.profile_picture.path):
+                            os.remove(old_profile.profile_picture.path)  # Delete the old image file
             except UserProfile.DoesNotExist:
                 pass
 
         super().save(*args, **kwargs)
 
     def remove_profile_picture(self):
-        """Sets the profile picture back to the default without deleting the default file."""
-        if self.profile_picture and self.profile_picture.name != "profile_pictures/default.png":
-            self.profile_picture.delete(save=False)  # Delete uploaded profile picture
-        self.profile_picture = "profile_pictures/default.png"  # Set back to default
-        self.save()
+        """
+        Resets the profile picture to `default.png` without deleting it.
+        """
+        if self.profile_picture and self.profile_picture.name != "media/default.png":
+            if os.path.isfile(self.profile_picture.path):
+                os.remove(self.profile_picture.path)  # Delete only uploaded images
 
+        self.profile_picture = "media/default.png"  # Reset to default
+        self.save()
     
     # To access Workday instances from UserProfile
     def get_workdays(self):

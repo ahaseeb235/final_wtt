@@ -35,7 +35,7 @@ class UserProfileForm(forms.ModelForm):
         """To handle the profile picture field."""
         profile_picture = self.cleaned_data.get('profile_picture')
         if profile_picture is None:  # If the user clears the image field
-            return 'profile_pictures/default.png'  # Revert to the default image
+            return 'media/default.png'  # Revert to the default image
         return profile_picture
             
 # user change form

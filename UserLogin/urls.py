@@ -6,7 +6,6 @@ from django.conf.urls.static import static
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import remove_profile_picture
 
 urlpatterns = [
     path('register/', views.register, name='register'),
@@ -18,7 +17,6 @@ urlpatterns = [
     path('users/', views.user_list, name='user_list'),
     path('users/<int:user_id>/', views.user_list, name='user_list'),
     path('users/<int:user_id>/edit/', views.edit_user, name='edit_user'),
-    path('remove_profile_picture/', remove_profile_picture, name='remove_profile_picture'),
     
 ]
 
