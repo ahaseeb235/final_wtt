@@ -14,7 +14,7 @@
                             class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                     {% else %}
                         <img class="profile-image"
-                            src="{{ user_profile.get_profile_picture_url }}"
+                            src="/media/default.png"
                             alt="Profile Picture"
                             class="img-fluid rounded-circle mb-3"
                             style="width: 150px; height: 150px;">
@@ -23,10 +23,7 @@
                     
                     <h4 class="pt-5">{{ user_profile.user.username }}</h4>
                     <p class="text-muted">{{ user_profile.position }}</p>
-                    <form method="POST" action="{% url 'revert_profile_picture' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Revert to Default Picture</button>
-                    </form>
+                    
                     
                 </div>
             </div>

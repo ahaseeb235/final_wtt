@@ -18,10 +18,10 @@
                         <p>Image URL: {{ user_profile.profile_picture.url }}</p>
                     {% else %}
                     <img class="profile-image"
-    src="{{ user_profile.get_profile_picture_url }}"
-    alt="Profile Picture"
-    class="img-fluid rounded-circle mb-3"
-    style="width: 150px; height: 150px;">
+                        src="/media/default.png"
+                        alt="Profile Picture"
+                        class="img-fluid rounded-circle mb-3"
+                        style="width: 150px; height: 150px;">
 
                     {% endif %}
 

@@ -4,6 +4,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 import os
 
+# Custom upload path for profile pictures
+def user_profile_picture_path(instance, filename):
+    # Upload to: media/profile_pictures/user_<id>/<filename>
+    return f'profile_pictures/user_{instance.user.id}/{filename}'
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='user_profile', on_delete=models.CASCADE)
     
