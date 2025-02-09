@@ -10,6 +10,7 @@ A web application built with Django to track employee working hours
 - [Project Background](#project-background)
 - [User Stories](#user-stories)
 - [Features](#features)
+- [Tests](#Tests)
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
 - [Project Structure](#project-structure)
@@ -48,8 +49,15 @@ The aim of this endeavour is to provide a simple solution to track employee work
   - Categorize workdays as Work, Sick Leave, Annual Leave, Bank Holiday.
 
 - **Dashboard**:
-  - List view of total hours worked per month and categorized hours (e.g., Sick Leave, Overtime).
-  - pagination on dashboard page
+  - Filters by Year, Month and Workday type available for all users
+  - Filter by User only available to System Admins and Managers. 
+  - Year Filter defaults to current year
+  - Month filter defaults to current month.
+  - Widgets for total Workday entries, Total work hours, total Annual Leave and Total Sick leave (results based on filters)
+  - Graph to display workday types distribution
+  - graph to display workday types over a period of months
+  - List of workday entries based on filter critiria. This can then be exported to csv. 
+  
 - **Data Management and hosting**:
   - use of postgreSQL 
   - hosting on render.com
@@ -60,6 +68,12 @@ The aim of this endeavour is to provide a simple solution to track employee work
   - To add calendar and time functionality for the form. (Flatpicker library)
 
 ---
+## Tests.py
+The tests.py file is a crucial part of a Django application, used to write unit tests and integration tests for your application. Testing ensures that your code works as expected, catches bugs early, and helps maintain code quality as your application grows.
+
+I wrote tests.py for th main application [wttapp] to ensure, views, models, forms and other components behave as expected. 
+
+
 
 ## Technologies Used
 - **Backend**: Django 5.1.4
