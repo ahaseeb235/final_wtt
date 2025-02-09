@@ -65,6 +65,8 @@ The aim of this endeavour is to provide a simple solution to track employee work
   - graph to display workday types over a period of months
   - List of workday entries based on filter critiria.
   - List of Workday entries pulled as a result of the filter can be exported to CSV
+![image](https://github.com/user-attachments/assets/c59f20d9-46b5-4db5-8047-d1efca0ff950)
+
   
   
 - **Data Management and hosting**:
