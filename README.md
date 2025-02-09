@@ -24,8 +24,13 @@ The aim of this endeavour is to provide a simple solution to track employee work
 ## User Stories
 - **Three Types of Users based on Position**
   - Staff: General users
-  - Manager: Would have CRUD permissions, such as edit/delete some records
+  - Manager: Would have CRUD permissions, such as edit/delete some records. 
+    - Can view User List
+    - Can change position of User
   - System Admin: Superuser with all CRUD permissions. 
+    - Can view User List
+    - Can change position of User
+    - Can delete posts and workday records.
 
 
 ## Features
@@ -41,7 +46,7 @@ The aim of this endeavour is to provide a simple solution to track employee work
   - calculation of total work hours
   - when workday_type is Bank Holiday or Sick Leave or Annual Leave, then time_in/time_out are not required. 
   - Categorize workdays as Work, Sick Leave, Annual Leave, Bank Holiday.
-  
+
 - **Dashboard**:
   - List view of total hours worked per month and categorized hours (e.g., Sick Leave, Overtime).
   - pagination on dashboard page
@@ -76,7 +81,7 @@ The aim of this endeavour is to provide a simple solution to track employee work
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ahaseeb235/wtt_djangoframework_v1.git
+   git clone https://github.com/ahaseeb235/final_wtt.git
    
 
 
@@ -104,45 +109,4 @@ The aim of this endeavour is to provide a simple solution to track employee work
     ```bash
     python manage.py runserver
 
-
-## Project Structure
-/worktimetracker          # Root directory of the project
-│
-├── /worktimetracker      # Main project folder
-│   ├── __init__.py       # Initializes the project as a Python package
-│   ├── settings.py       # Configuration settings for the project
-│   ├── urls.py           # URL routing for the project
-│   ├── wsgi.py           # WSGI application entry point
-│   └── asgi.py           # ASGI application entry point
-│
-├── /webapp                 # Main app folder 
-│   ├── admin.py            # Admin panel configurations
-│   ├── apps.py             # App configuration
-│   ├── models.py           # Database models
-│   ├── views.py            # Application views
-│   ├── forms.py            # Forms for user input
-│   ├── urls.py             # App-specific URL routing
-│   ├── templates/          # HTML templates for the app
-│   └── static/             # Static files (CSS, JS, images)
-│
-├── /static                 # Project-wide static files
-│   ├── /css                # Stylesheets
-│   ├── /js                 # JavaScript files
-│   
-│
-├── /templates              # Project-wide templates
-│   ├── base.html           # Base template for the project
-│   ├── index.html          # Home page template
-│   ├── create-record.html  # create-record page template
-│   ├── update-record.html  # update page template
-|   ├── view-record.html    # view records page template
-|   ├── nabar.html          # template for navbar
-|   ├── login.html          # view records page template
-|   ├── dashboard.html      # template for dashboard
-|   └── regist.html         # register user template
-│
-├── manage.py               # Django management script
-├── requirements.txt        # List of Python dependencies
-├── README.md               # Project documentation
-└── .gitignore              # Files and folders to ignore in Git
 
