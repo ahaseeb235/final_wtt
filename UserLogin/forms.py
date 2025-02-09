@@ -30,6 +30,13 @@ class UserProfileForm(forms.ModelForm):
     # Make 'position' and 'manager_name' fields read-only
         self.fields['position'].disabled = True
         self.fields['manager_name'].disabled = True
+        
+    def clean_profile_picture(self):
+        """To handle the profile picture field."""
+        profile_picture = self.cleaned_data.get('profile_picture')
+        if profile_picture is None:  # If the user clears the image field
+            return 'profile_pictures/default.png'  # Revert to the default image
+        return profile_picture
             
 # user change form
 class UserProfileChange(UserChangeForm):
@@ -56,5 +63,5 @@ class UserEditForm(forms.ModelForm):
         # Make all fields read-only except for 'status' and 'manager_name'
         for field_name, field in self.fields.items():
             if field_name not in ['position', 'status', 'manager_name']:
-                field.widget.attrs['readonly'] = True  # Use readonly instead of disabled
+                field.widget.attrs['readonly'] = True  
                 field.required = False  # Make the field not required

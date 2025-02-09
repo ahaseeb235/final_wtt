@@ -88,6 +88,15 @@ def change_password(request):
         'password_form': password_form,
     })
     
+    
+
+@login_required
+def remove_profile_picture(request):
+    """Allows users to reset their profile picture to default."""
+    user_profile = request.user.user_profile
+    user_profile.remove_profile_picture()
+    return redirect('profile')
+    
 
 
 

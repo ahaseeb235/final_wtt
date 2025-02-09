@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import os
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='user_profile', on_delete=models.CASCADE)
@@ -46,9 +47,10 @@ class UserProfile(models.Model):
         help_text="User status (Active or Former)."
     )
     
-    # Profile picture
-    profile_picture = models.ImageField(upload_to='profile_pictures', blank=True, null=True)
+     # Profile Picture with default
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
+    
     def __str__(self):
         return f"{self.user.username} - {self.position}"
     
@@ -63,6 +65,31 @@ class UserProfile(models.Model):
         if not self.email:
             self.email = self.user.email
         super().save(*args, **kwargs)
+        
+    def save(self, *args, **kwargs):
+        """
+        Override save method:
+        - Delete previous profile picture if a new one is uploaded.
+        - Ensure users can revert to the default profile picture.
+        """
+        if self.pk:  # If the instance already exists
+            try:
+                old_profile = UserProfile.objects.get(pk=self.pk)
+                if old_profile.profile_picture and self.profile_picture != old_profile.profile_picture:
+                    if old_profile.profile_picture.name != "profile_pictures/default.png":
+                        old_profile.profile_picture.delete(save=False)  # Delete the old image file
+            except UserProfile.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+    def remove_profile_picture(self):
+        """Sets the profile picture back to the default without deleting the default file."""
+        if self.profile_picture and self.profile_picture.name != "profile_pictures/default.png":
+            self.profile_picture.delete(save=False)  # Delete uploaded profile picture
+        self.profile_picture = "profile_pictures/default.png"  # Set back to default
+        self.save()
+
     
     # To access Workday instances from UserProfile
     def get_workdays(self):
