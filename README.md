@@ -114,6 +114,7 @@ I wrote tests.py for th main application [wttapp] to ensure, views, models, form
 - **Libraries/Frameworks**:
   - Bootstrap for UI components - bootswatch.
   - JavaScript for dynamic and interactive elements - Flatpicker.
+  - Chart.js for display of charts and graphs on dashboard
 
 ---
 
