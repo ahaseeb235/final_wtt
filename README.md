@@ -36,6 +36,9 @@ The aim of this endeavour is to provide a simple solution to track employee work
     - Can change position of User
     - Can delete posts and workday records.
 
+![image](https://github.com/user-attachments/assets/d749742d-63a3-4ff5-b534-4d59127efffb)
+
+
 
 ## Features
 - **User Management**: 
