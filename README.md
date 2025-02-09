@@ -47,7 +47,8 @@ The aim of this endeavour is to provide a simple solution to track employee work
   - User password change
   - User details and profile update with image
   - users can create, view, delete and edit only their own records
-  - admin/superuser can CRUD all. Manager can CRUD all. 
+  - admin/superuser can CRUD all. Manager can CRUD all.
+  - However, only record owners can update/edit Name, email, emergency contact when they "edit" their own profile. 
   
 - **Time Tracking**:
   - Log daily working hours with time-in and time-out.
