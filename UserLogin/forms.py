@@ -27,7 +27,9 @@ class UserProfileForm(forms.ModelForm):
         self.user = kwargs.pop('user', None)  # Get the current user from kwargs
         super(UserProfileForm, self).__init__(*args, **kwargs)
 
-    
+    # Make 'position' and 'manager_name' fields read-only
+        self.fields['position'].disabled = True
+        self.fields['manager_name'].disabled = True
             
 # user change form
 class UserProfileChange(UserChangeForm):
