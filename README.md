@@ -13,6 +13,7 @@ A web application built with Django to track employee working hours
 - [Project Background](#project-background)
 - [User Stories](#user-stories)
 - [Features](#features)
+- [Applications Within the WorkTimeTracker App](#applications)
 - [Tests](#Tests)
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
@@ -62,7 +63,9 @@ The aim of this endeavour is to provide a simple solution to track employee work
   - Widgets for total Workday entries, Total work hours, total Annual Leave and Total Sick leave (results based on filters)
   - Graph to display workday types distribution
   - graph to display workday types over a period of months
-  - List of workday entries based on filter critiria. This can then be exported to csv. 
+  - List of workday entries based on filter critiria.
+  - List of Workday entries pulled as a result of the filter can be exported to CSV
+  
   
 - **Data Management and hosting**:
   - use of postgreSQL 
@@ -72,8 +75,31 @@ The aim of this endeavour is to provide a simple solution to track employee work
 - **Use of Javascript**:
   - Use of JS for success messages on the pages
   - To add calendar and time functionality for the form. (Flatpicker library)
+  - Use of Chart.js for display of charts
 
----
+
+## Applications Within the WorkTimeTracker App
+- **wttapt**: 
+  - This is the main application designed to facilitate users to enter their working hours.
+  - Staff users can create/edit records.
+  - Manager and System Admin users can also delete records.
+  - Data in this application is displayed in the Dashboard.
+
+- **UserLogin**: 
+  - This application is used to store/create/edit user records and user details. 
+  - Staff users can create/edit profiles.
+  - Manager and System Admin users assign manager and change position of user. 
+  - Users can update their user profile images and passwords.
+  - Authentication, password reset and reset upon request are also features of the application. 
+ 
+- **Noticeboard**: 
+  - This is mainly a blog-post style application.
+  - Users can create and edit short posts.
+  - Record owners can edit and delete their own posts.
+  - System Admin and Managers edit and delete all posts.
+  - Latest three posts are displayed on the home page.  
+ 
+
 ## Tests.py
 The tests.py file is a crucial part of a Django application, used to write unit tests and integration tests for your application. Testing ensures that your code works as expected, catches bugs early, and helps maintain code quality as your application grows.
 
