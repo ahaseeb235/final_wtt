@@ -6,6 +6,9 @@ Git Repo: https://github.com/ahaseeb235/final_wtt.git
 
 A web application built with Django to track employee working hours
 
+![image](https://github.com/user-attachments/assets/1e817579-c2c7-40be-a76a-173aeae18f86)
+
+
 ## Table of Contents
 - [Project Background](#project-background)
 - [User Stories](#user-stories)
