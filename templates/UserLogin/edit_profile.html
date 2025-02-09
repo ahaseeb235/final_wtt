@@ -6,23 +6,31 @@
 {% block content %}
 <div class="container mt-1">
     <div class="row">
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
             <div class="card">
                 <div class="card-body text-center">
                     {% if user_profile.profile_picture %}
-                    <img class="profile-image" src="{{ user_profile.profile_picture.url }}" alt="Profile Picture"
-                        class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
+                        <img class="profile-image" src="{{ user_profile.profile_picture.url }}" alt="Profile Picture"
+                            class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                     {% else %}
-                    <img class="profile-image" src="/media/default.png" alt="Default Profile Picture"
-                        class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
+                    <img class="profile-image"
+                    src="{{ user_profile.get_profile_picture_url }}"
+                    alt="Profile Picture"
+                    class="img-fluid rounded-circle mb-3"
+                    style="width: 150px; height: 150px;">
+                
                     {% endif %}
                     
                     <h4 class="pt-5">{{ user_profile.user.username }}</h4>
                     <p class="text-muted">{{ user_profile.position }}</p>
+                    <form method="POST" action="{% url 'revert_profile_picture' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Revert to Default Picture</button>
+                    </form>
                     
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <div class="col-md-8">
             <div class="card">
