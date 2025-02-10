@@ -28,7 +28,6 @@ urlpatterns = [
     path('wttapp', include('wttapp.urls')),
     path('accounts/', include('UserLogin.urls')),
     path('', views.index, name='index'),
-    path('noticeboard/', include('noticeboard.urls')),
     path('accounts/', include('django.contrib.auth.urls')), # for password reset
     path('password-reset/',
          auth_views.PasswordResetView.as_view(
