@@ -31,7 +31,7 @@ def userlogin(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect(reverse('index'))
+                return HttpResponseRedirect(reverse('login'))
     return render(request, 'UserLogin/login.html', {'form': form})
 
 # User Logout View
